@@ -158,6 +158,8 @@ _Program2:
            ld bc,14
            call LoadVRAM
 
+           ; When the assets are processed, Loader switches
+           ; itself into program 1 (Normal).
            ld a,1
            ld (Loader_Program),a
            jp EndProgramSwitch

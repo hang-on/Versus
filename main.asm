@@ -103,17 +103,22 @@ InitializeFramework:
 .ends
 
 ; --------------------------------------------------------------
-.section "Main Loop" free
-MainLoop:
-           call WaitForFrameInterrupt
-           call Loader
-           call Ball
-           call Hub
-           jp MainLoop
-.ends
+.section "Main Loop" free                                      ;
+; --------------------------------------------------------------
+MainLoop:                                                      ;
+           call WaitForFrameInterrupt                          ;
+           call Loader                                         ;
+           call Ball                                           ;
+           call Hub                                            ;
+           jp MainLoop                                         ;
+.ends                                                          ;
+; --------------------------------------------------------------
+
+
 
 ; --------------------------------------------------------------
 .section "Loader" free
+; --------------------------------------------------------------
 Loader:
            ; Switch according to game state.
            ld a,(Hub_GameState)
@@ -221,6 +226,7 @@ _EndSwitch:
 
 ; --------------------------------------------------------------
 .section "Ball" free
+; --------------------------------------------------------------
 Ball:
            ; Switch according to current game state.
            ld a,(Hub_GameState)
@@ -241,11 +247,11 @@ _1:
            jp c,+
 
            ; Bounce ball against bottom border.
-           ld a,169         ; load bottom border constant.
-           ld (Ball_Y),a        ; set ball y = bottom border.
-           ld a,1              ; load a non-zero value into vdir,
-           ld (Ball_VerticalDirection),a         ; to make ball travel upwards.
-           jp ++           ; forward to end of border tests.
+           ld a,169
+           ld (Ball_Y),a
+           ld a,1
+           ld (Ball_VerticalDirection),a
+           jp ++
 
 +          ; See if ball collides with the top border.
            ld a,(Ball_Y)
@@ -334,6 +340,7 @@ _ResetBall:
 
 ; --------------------------------------------------------------
 .section "Hub" free
+; --------------------------------------------------------------
 Hub:
            ; Increment loop counter at every loop.
            ld hl,Hub_LoopCounter

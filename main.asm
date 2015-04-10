@@ -139,28 +139,53 @@ _Program2:
            ld b,1
            call SetRegister
 
+           ; Load the playfield tiles @ 0
            ld hl,$0000
            call PrepareVRAM
            ld hl,PlayfieldTiles
            ld bc,3*32
            call LoadVRAM
 
+           ; Load the score tiles @ index 16.
            ld hl,$0200
            call PrepareVRAM
            ld hl,ScoreTiles
            ld bc,60*32
            call LoadVRAM
 
+           ; Load playfield tilemap into name table.
            ld hl,$3800
            call PrepareVRAM
            ld hl,PlayfieldTilemap
            ld bc,32*24*2
            call LoadVRAM
 
+           ; Load playfield/background colors into bank 1.
            ld hl,$c000
            call PrepareVRAM
            ld hl,PlayfieldPalette
            ld bc,14
+           call LoadVRAM
+
+           ; Load sprite colors into bank 2.
+           ld hl,$c010
+           call PrepareVRAM
+           ld hl,SpritePalette
+           ld bc,4
+           call LoadVRAM
+
+           ; Load the ball tiles @ index 256.
+           ld hl,$2000
+           call PrepareVRAM
+           ld hl,BallTile
+           ld bc,32
+           call LoadVRAM
+
+           ; Load the paddle tiles @ index 257.
+           ld hl,$2020
+           call PrepareVRAM
+           ld hl,PaddleTiles
+           ld bc,3 * 32
            call LoadVRAM
 
            ; When the assets are processed, Loader switches

@@ -229,17 +229,21 @@ GameState_0:
            ld a,2
            ld (Loader_Program),a
 
-           ; Change game state.
+           ; Change game state to 1 (object initialization).
+           ; The game objects will never experience GameState 0.
            ld a,1
            ld (Hub_GameState),a
            jp EndGameStateSwitch
 
 GameState_1:
-
+           ; We have just had the initialization cycle.
+           ; Now change game state to match mode.
+           ld a,2
+           ld (Hub_GameState),a
            jp EndGameStateSwitch
 
 GameState_2:
-
+           ; Match mode.
            jp EndGameStateSwitch
 
 GameState_3:

@@ -19,10 +19,15 @@
            banks 8
            .endro
 
+; Constants:
+           ; This game uses up to 16 hardware sprites.
+           .equ SAT_BUFFER_SIZE 16 + 32
+
 ; Organize variables:
            ; Variables are reset to 0 as part of the general
            ; memory initialization.
            .enum $c000 export
+           SATBuffer dsb SAT_BUFFER_SIZE
            FrameInterruptFlag db
 
            Hub_VDPStatus db
@@ -94,7 +99,7 @@ InitializeFramework:
 .ends
 
 .section "Main Loop" free
-MainLoop:  
+MainLoop:
            call WaitForFrameInterrupt
            call Loader
            call Hub
@@ -175,6 +180,22 @@ _0:        ; Update vdp register.
 _1:        ld a,%11100000
            ld b,1
            call SetRegister
+           
+           ; Load buffer contents to SAT in VRAM.
+           ld hl,$3f00
+           call PrepareVRAM
+           ld hl,SATBuffer
+           ld b,SAT_BUFFER_SIZE/3
+           ld c,$be
+           otir
+           ld hl,$3f80
+           call PrepareVRAM
+           ld hl,SATBuffer+(SAT_BUFFER_SIZE/3)
+           ld b,(SAT_BUFFER_SIZE/3)*2
+           ld c,$be
+           otir
+
+
            jp _EndSwitch
 
 _2:        ; Unused at the moment

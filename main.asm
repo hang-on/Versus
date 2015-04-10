@@ -28,6 +28,10 @@
 
            Ball_X db
            Ball_Y db
+           Ball_HorizontalSpeed db
+           Ball_VerticalSpeed db
+           Ball_HorizontalDirection db
+           Ball_VerticalDirection db
 
            Hub_VDPStatus db
            Hub_GameState db
@@ -113,7 +117,7 @@ MainLoop:
 Loader:
            ; Switch according to game state.
            ld a,(Hub_GameState)
-           ld de,SwitchVectors
+           ld de,_SwitchVectors
            call GetVector
            jp (hl)
 
@@ -171,7 +175,7 @@ _0:        ; Update vdp register.
            ld hl,PaddleTiles
            ld bc,3 * 32
            call LoadVRAM
-           
+
            ; Place the sprite terminator in sat.
            ld hl,$3f00+15
            call PrepareVRAM
@@ -204,8 +208,6 @@ _1:        ld a,%11100000
            ld b,32
            ld c,$be
            otir
-
-
            jp _EndSwitch
 
 _2:        ; Unused at the moment
@@ -214,8 +216,7 @@ _2:        ; Unused at the moment
 _EndSwitch:
            ret
 
-SwitchVectors:
-           .dw _0 _1 _2
+           _SwitchVectors: .dw _0 _1 _2
 .ends
 
 ; --------------------------------------------------------------
@@ -223,17 +224,16 @@ SwitchVectors:
 Ball:
            ; Switch according to current game state.
            ld a,(Hub_GameState)
-           ld de,_GameStateVectors
+           ld de,_SwitchVectors
            call GetVector
            jp (hl)
 
-; Initialize the ball:
-_0:        ld a,127
-           ld (Ball_X),a
-           ld a,92
-           ld (Ball_Y),a
+; Initialize/reset the ball:
+_0:        call _ResetBall
            jp _EndSwitch
 
+; Match is playing - update the ball!
+; Movement, bouncing of borders and paddles, scoring. 
 _1:        jp _EndSwitch
 
 _EndSwitch:
@@ -243,9 +243,17 @@ _EndSwitch:
            ld a,(Ball_X)
            ld (SATBuffer+16),a
 
+; Return from ball routine.
            ret
 
-_GameStateVectors: .dw _0 _1
+_ResetBall:
+           ld a,127
+           ld (Ball_X),a
+           ld a,92
+           ld (Ball_Y),a
+           ret
+
+           _SwitchVectors: .dw _0 _1
 .ends
 
 ; --------------------------------------------------------------
@@ -257,7 +265,7 @@ Hub:
 
            ; Switch according to current game state.
            ld a,(Hub_GameState)
-           ld de,_GameStateVectors
+           ld de,_SwitchVectors
            call GetVector
            jp (hl)
 
@@ -277,8 +285,7 @@ _EndSwitch:
 
            ret
 
-_GameStateVectors:
-           .dw _0 _1 _2
+           _SwitchVectors: .dw _0 _1 _2
 .ends
 
 

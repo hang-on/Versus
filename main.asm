@@ -27,10 +27,8 @@
 
            Hub_VDPStatus db
            Hub_GameState db
-           Hub_FrameCounter db
-           Hub_Suspend db
+           Hub_LoopCounter db
 
-           Loader_Program db
            .ende
 
 ; Beginning of ROM:
@@ -44,13 +42,10 @@
 .orga $0038
 ; Frame interrupt handler:
            ex af,af'
-           exx
            in a,$bf
            ld (Hub_VDPStatus),a
            ld a,1
            ld (FrameInterruptFlag),a
-           call Loader
-           exx
            ex af,af'
            ei
            ret
@@ -101,40 +96,23 @@ InitializeFramework:
 .section "Main Loop" free
 ; Main program loop. Processed on a frame-by-frame basis.
 MainLoop:  call WaitForFrameInterrupt
+           call Loader
            call Hub
            jp MainLoop
-_Program0:
 .ends
 
 .section "Loader" free
 ; VRAM loader routine. Called by the frame interrupt handler.
 Loader:
-           ; Turn screen on - big job vram loader programs turn
-           ; the screen off to avoid graphic glitches.
-           ld a,%11100000
-           ld b,1
-           call SetRegister
 
-           ; Switch according to program selector setting.
-           ld a,(Loader_Program)
-           ld de,ProgramVectors
+; Switch according to game state.
+           ld a,(Hub_GameState)
+           ld de,SwitchVectors
            call GetVector
            jp (hl)
 
-; Loader is OFF. Return from loader routine now.
-_Program0:
-           ld a,(Loader_Program)
-           or a
-           ret z
-
-; Normal (for in-game graphics processing).
-_Program1:
-
-           jp EndProgramSwitch
-
-; Load match assets. This is a big job!
-_Program2:
-           ; Turn screen off.
+; Load assets for a match:
+_0:        ; Update vdp register.
            ld a,%10100000
            ld b,1
            call SetRegister
@@ -187,83 +165,63 @@ _Program2:
            ld hl,PaddleTiles
            ld bc,3 * 32
            call LoadVRAM
-           
+
            ; Set the border color.
            ld a,%11110000
            ld b,7
            call SetRegister
+           jp _EndSwitch
 
-           ; When the assets are processed, Loader switches
-           ; itself into program 1 (Normal).
-           ld a,1
-           ld (Loader_Program),a
-           jp EndProgramSwitch
+; Match: Just keep the display enabled, update the sprite table
+; and the score digits in the name table.
+_1:        ; Set register 1.
+           ld a,%11100000
+           ld b,1
+           call SetRegister
+           jp _EndSwitch
 
-_Program3:
+_2:        ; Unused at the moment
+           jp _EndSwitch
 
-           jp EndProgramSwitch
-
-EndProgramSwitch:
+_EndSwitch:
            ret
 
-ProgramVectors:
-           .dw _Program0 _Program1 _Program2 _Program3
+SwitchVectors:
+           .dw _0 _1 _2
 .ends
 
 .section "Hub" free
-; The Hub is the program's central routine.
 Hub:
-           ; Reset the suspend switch.
-           xor a
-           ld (Hub_Suspend),a
+           ; Increment loop counter at every loop.
+           ld hl,Hub_LoopCounter
+           inc (hl)
 
-           ; Switch according to current game state.
+; Switch according to current game state.
            ld a,(Hub_GameState)
            ld de,GameStateVectors
            call GetVector
            jp (hl)
 
-GameState_0:
-           ; Gamestate 0 - this is the very first frame!
-           ; Select "Load match assets" program on the loader.
-           ld a,2
-           ld (Loader_Program),a
-
-           ; Change game state to 1 (object initialization).
-           ; The game objects will never experience GameState 0.
+; State 0: Initialization.
+_0:        ; Change game state to match.
            ld a,1
            ld (Hub_GameState),a
-           jp EndGameStateSwitch
+           jp _EndSwitch
 
-GameState_1:
-           ; We have just had the initialization cycle.
-           ; Now change game state to match mode.
-           ld a,2
-           ld (Hub_GameState),a
-           jp EndGameStateSwitch
+; State 1: Match
+_1:        jp _EndSwitch
 
-GameState_2:
-           ; Match mode.
-           jp EndGameStateSwitch
+_2:        ; Unused
+           jp _EndSwitch
 
-GameState_3:
-
-           jp EndGameStateSwitch
-
-GameState_4:
-
-           jp EndGameStateSwitch
-
-EndGameStateSwitch:
-
-           ; Increment frame counter.
-           ld hl,Hub_FrameCounter
-           inc (hl)
+_3:        ; Unused
+           jp _EndSwitch
+_EndSwitch:
 
            ret
 
 GameStateVectors:
-           .dw GameState_0 GameState_1 GameState_2 GameState_3 GameState_4
+           .dw _0 _1 _2 _3
 .ends
 
 .bank 1 slot 1

@@ -94,18 +94,16 @@ InitializeFramework:
 .ends
 
 .section "Main Loop" free
-; Main program loop. Processed on a frame-by-frame basis.
-MainLoop:  call WaitForFrameInterrupt
+MainLoop:  
+           call WaitForFrameInterrupt
            call Loader
            call Hub
            jp MainLoop
 .ends
 
 .section "Loader" free
-; VRAM loader routine. Called by the frame interrupt handler.
 Loader:
-
-; Switch according to game state.
+           ; Switch according to game state.
            ld a,(Hub_GameState)
            ld de,SwitchVectors
            call GetVector
@@ -174,8 +172,7 @@ _0:        ; Update vdp register.
 
 ; Match: Just keep the display enabled, update the sprite table
 ; and the score digits in the name table.
-_1:        ; Set register 1.
-           ld a,%11100000
+_1:        ld a,%11100000
            ld b,1
            call SetRegister
            jp _EndSwitch
@@ -196,7 +193,7 @@ Hub:
            ld hl,Hub_LoopCounter
            inc (hl)
 
-; Switch according to current game state.
+           ; Switch according to current game state.
            ld a,(Hub_GameState)
            ld de,GameStateVectors
            call GetVector
@@ -211,17 +208,15 @@ _0:        ; Change game state to match.
 ; State 1: Match
 _1:        jp _EndSwitch
 
-_2:        ; Unused
-           jp _EndSwitch
+; Unused:
+_2:        jp _EndSwitch
 
-_3:        ; Unused
-           jp _EndSwitch
 _EndSwitch:
 
            ret
 
 GameStateVectors:
-           .dw _0 _1 _2 _3
+           .dw _0 _1 _2
 .ends
 
 .bank 1 slot 1

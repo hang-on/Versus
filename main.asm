@@ -268,7 +268,31 @@ _1:        ; Determine if ball should move up or down.
            ld hl,Ball_HorizontalSpeed
            sub (hl)
            ld (Ball_X),a
-++         ; end of move ball section.
+
+++         ; See if ball collides with the bottom border.
+           ld a,(Ball_Y)
+           cp 169
+           jp c,+
+
+           ; Bounce ball against bottom border.
+           ld a,169         ; load bottom border constant.
+           ld (Ball_Y),a        ; set ball y = bottom border.
+           ld a,1              ; load a non-zero value into vdir,
+           ld (Ball_VerticalDirection),a         ; to make ball travel upwards.
+           jp ++           ; forward to end of border tests.
+
++          ; See if ball collides with the top border.
+           ld a,(Ball_Y)
+           cp 13
+           jp nc,++
+
+           ; Bounce ball against top border.
+           ld a,13
+           ld (Ball_Y),a
+           ld a,0
+           ld (Ball_VerticalDirection),a
+++
+           ; end of move ball section.
 
            jp _EndSwitch
 

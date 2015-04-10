@@ -233,8 +233,44 @@ _0:        call _ResetBall
            jp _EndSwitch
 
 ; Match is playing - update the ball!
-; Movement, bouncing of borders and paddles, scoring.
-_1:        jp _EndSwitch
+_1:        ; Determine if ball should move up or down.
+           ld a,(Ball_VerticalDirection)
+           or a
+           jp z,+
+
+           ; Move ball up:
+           ld a,(Ball_Y)
+           ld hl,Ball_VerticalSpeed
+           sub (hl)
+           ld (Ball_Y),a
+           jp ++
+
+           ; Move ball down:
++          ld a,(Ball_Y)
+           ld hl,Ball_VerticalSpeed
+           add a,(hl)
+           ld (Ball_Y),a
+
+           ; Determine if ball should move right or left.
+++         ld a,(Ball_HorizontalDirection)
+           cp 0
+           jp z,+
+
+           ; Move ball right.
+           ld a,(Ball_X)
+           ld hl,Ball_HorizontalSpeed
+           add a,(hl)
+           ld (Ball_X),a
+           jp ++
+
+           ; Move ball left.
++          ld a,(Ball_X)
+           ld hl,Ball_HorizontalSpeed
+           sub (hl)
+           ld (Ball_X),a
+++         ; end of move ball section.
+
+           jp _EndSwitch
 
 _EndSwitch:
            ; Update ball data in the SAT buffer.
@@ -256,7 +292,7 @@ _ResetBall:
            ld (Ball_VerticalSpeed),a
            xor a
            ld (Ball_VerticalDirection),a
-           
+
            ld a,(Ball_HorizontalDirection)
            or a
            jp nz,+

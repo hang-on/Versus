@@ -233,7 +233,7 @@ _0:        call _ResetBall
            jp _EndSwitch
 
 ; Match is playing - update the ball!
-; Movement, bouncing of borders and paddles, scoring. 
+; Movement, bouncing of borders and paddles, scoring.
 _1:        jp _EndSwitch
 
 _EndSwitch:
@@ -251,6 +251,20 @@ _ResetBall:
            ld (Ball_X),a
            ld a,92
            ld (Ball_Y),a
+           ld a,2
+           ld (Ball_HorizontalSpeed),a
+           ld (Ball_VerticalSpeed),a
+           xor a
+           ld (Ball_VerticalDirection),a
+           
+           ld a,(Ball_HorizontalDirection)
+           or a
+           jp nz,+
+           inc a
+           ld (Ball_HorizontalDirection),a
+           ret
++          dec a
+           ld (Ball_HorizontalDirection),a
            ret
 
            _SwitchVectors: .dw _0 _1

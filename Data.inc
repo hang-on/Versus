@@ -1,4 +1,3 @@
-.section "Data" free
 ; --------------------------------------------------------------
 ; DATA
 ; --------------------------------------------------------------
@@ -41,9 +40,7 @@ RegisterInitValues:
 
            .db $ff         ; reg. 10, raster line interrupt.
                            ; turn off line int. requests.
-.ends
 
-.section "Graphics 0" free
 ; Graphics for the playfield.
 
 PlayfieldPalette .include "Playfield_Palette.inc"
@@ -55,4 +52,3 @@ SpritePalette .include "Sprites_Palette.inc"
 BallTile .include "Balltile.inc"
 PaddleTiles .include "PaddleTiles.inc"
 
-.ends

@@ -1,21 +1,22 @@
 ; Setup the SDSC tag, including correct chekcsum:
-           .sdsctag 0.1, "aaa", "aaa", "Anders S. Jensen"
+           .sdsctag 0.1, "Versus", ReleaseNotes, "Anders S. Jensen"
 
-; Organize RAM and ROM maps, including banking:
+; Organize read only memory:
+           ; Three rom slots a' 16K. Assume standard Sega mapper
+           ; with bankswitching in slot 2.
            .memorymap
            defaultslot 0
            slotsize $4000
            slot 0 $0000
            slot 1 $4000
            slot 2 $8000
-           slotsize $2000
-           slot 3 $c000
            .endme
 
+           ; Make a 128K rom
            .rombankmap
-           bankstotal 2
+           bankstotal 8
            banksize $4000
-           banks 2
+           banks 8
            .endro
 
 ; Organize variables:
@@ -57,6 +58,10 @@
 .orga $0066
 ; Pause interrupt handler:
            retn
+
+.section "Minor routines and helper functions" free
+           .include "MinorRoutines.inc"
+.ends
 
 .section "Memory initialization" free
 InitializeFramework:
@@ -227,5 +232,16 @@ GameStateVectors:
            .dw GameState_0 GameState_1 GameState_2 GameState_3 GameState_4
 .ends
 
-           .include "MinorRoutines.inc"
+.bank 1 slot 1
+.section "Bank 1: Misc" free
+ReleaseNotes:
+.db "Pong. The world can never be saturated with clones of this"
+.db " retro-gaming classic. May I present: Nya -versus- Ken!" 0
+
+
+.ends
+
+.bank 2 slot 2
+.section "Bank 2: Data" free
            .include "Data.inc"
+.ends

@@ -1,4 +1,3 @@
-.section "Minor Routines and helper functions" free
 ; --------------------------------------------------------------
 ; PREPARE VRAM.
 ; Set up vdp to recieve data at vram address in HL.
@@ -81,4 +80,3 @@ WaitForFrameInterrupt:
            xor a
            ld (FrameInterruptFlag),a
            ret
-.ends

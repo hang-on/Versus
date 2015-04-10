@@ -12,11 +12,11 @@
            slot 2 $8000
            .endme
 
-           ; Make a 128K rom
+           ; Make a 64K rom
            .rombankmap
-           bankstotal 8
+           bankstotal 4
            banksize $4000
-           banks 8
+           banks 4
            .endro
 
 ; Organize variables:

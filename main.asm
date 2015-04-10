@@ -19,16 +19,15 @@
            banks 8
            .endro
 
-; Constants:
-           ; This game uses up to 16 hardware sprites.
-           .equ SAT_BUFFER_SIZE 16 + 32
-
 ; Organize variables:
            ; Variables are reset to 0 as part of the general
            ; memory initialization.
            .enum $c000 export
-           SATBuffer dsb SAT_BUFFER_SIZE
+           SATBuffer dsb 16 + 32
            FrameInterruptFlag db
+
+           Ball_X db
+           Ball_Y db
 
            Hub_VDPStatus db
            Hub_GameState db
@@ -63,6 +62,7 @@
            .include "MinorRoutines.inc"
 .ends
 
+; --------------------------------------------------------------
 .section "Memory initialization" free
 InitializeFramework:
            ; Overwrite 4K of RAM with zeroes.
@@ -98,14 +98,17 @@ InitializeFramework:
            jp MainLoop
 .ends
 
+; --------------------------------------------------------------
 .section "Main Loop" free
 MainLoop:
            call WaitForFrameInterrupt
            call Loader
+           call Ball
            call Hub
            jp MainLoop
 .ends
 
+; --------------------------------------------------------------
 .section "Loader" free
 Loader:
            ; Switch according to game state.
@@ -168,6 +171,13 @@ _0:        ; Update vdp register.
            ld hl,PaddleTiles
            ld bc,3 * 32
            call LoadVRAM
+           
+           ; Place the sprite terminator in sat.
+           ld hl,$3f00+15
+           call PrepareVRAM
+           ld a,$d0
+           ld c,$be
+           out (c),a
 
            ; Set the border color.
            ld a,%11110000
@@ -180,18 +190,18 @@ _0:        ; Update vdp register.
 _1:        ld a,%11100000
            ld b,1
            call SetRegister
-           
+
            ; Load buffer contents to SAT in VRAM.
            ld hl,$3f00
            call PrepareVRAM
            ld hl,SATBuffer
-           ld b,SAT_BUFFER_SIZE/3
+           ld b,16
            ld c,$be
            otir
            ld hl,$3f80
            call PrepareVRAM
-           ld hl,SATBuffer+(SAT_BUFFER_SIZE/3)
-           ld b,(SAT_BUFFER_SIZE/3)*2
+           ld hl,SATBuffer+16
+           ld b,32
            ld c,$be
            otir
 
@@ -208,6 +218,37 @@ SwitchVectors:
            .dw _0 _1 _2
 .ends
 
+; --------------------------------------------------------------
+.section "Ball" free
+Ball:
+           ; Switch according to current game state.
+           ld a,(Hub_GameState)
+           ld de,_GameStateVectors
+           call GetVector
+           jp (hl)
+
+; Initialize the ball:
+_0:        ld a,127
+           ld (Ball_X),a
+           ld a,92
+           ld (Ball_Y),a
+           jp _EndSwitch
+
+_1:        jp _EndSwitch
+
+_EndSwitch:
+           ; Update ball data in the SAT buffer.
+           ld a,(Ball_Y)
+           ld (SATBuffer),a
+           ld a,(Ball_X)
+           ld (SATBuffer+16),a
+
+           ret
+
+_GameStateVectors: .dw _0 _1
+.ends
+
+; --------------------------------------------------------------
 .section "Hub" free
 Hub:
            ; Increment loop counter at every loop.
@@ -216,7 +257,7 @@ Hub:
 
            ; Switch according to current game state.
            ld a,(Hub_GameState)
-           ld de,GameStateVectors
+           ld de,_GameStateVectors
            call GetVector
            jp (hl)
 
@@ -236,19 +277,21 @@ _EndSwitch:
 
            ret
 
-GameStateVectors:
+_GameStateVectors:
            .dw _0 _1 _2
 .ends
 
+
+; --------------------------------------------------------------
 .bank 1 slot 1
 .section "Bank 1: Misc" free
 ReleaseNotes:
 .db "Pong. The world can never be saturated with clones of this"
 .db " retro-gaming classic. May I present: Nya -versus- Ken!" 0
-
-
 .ends
 
+
+; --------------------------------------------------------------
 .bank 2 slot 2
 .section "Bank 2: Data" free
            .include "Data.inc"

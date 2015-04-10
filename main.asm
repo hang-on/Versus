@@ -191,6 +191,8 @@ GameState_0:
            ; Select "Load match assets" program on the loader.
            ld a,2
            ld (Loader_Program),a
+
+           ; Change game state.
            ld a,1
            ld (Hub_GameState),a
            jp EndGameStateSwitch

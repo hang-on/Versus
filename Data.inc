@@ -51,4 +51,8 @@ PlayfieldTiles .include "Playfield_Tiles.inc"
 PlayfieldTilemap .include "Playfield_Tilemap.inc"
 ScoreTiles .include "DigitTiles.inc"
 
+SpritePalette .include "Sprites_Palette.inc"
+BallTile .include "Balltile.inc"
+PaddleTiles .include "PaddleTiles.inc"
+
 .ends

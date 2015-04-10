@@ -187,6 +187,11 @@ _Program2:
            ld hl,PaddleTiles
            ld bc,3 * 32
            call LoadVRAM
+           
+           ; Set the border color.
+           ld a,%11110000
+           ld b,7
+           call SetRegister
 
            ; When the assets are processed, Loader switches
            ; itself into program 1 (Normal).

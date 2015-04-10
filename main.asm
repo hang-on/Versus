@@ -32,6 +32,9 @@
            Ball_VerticalSpeed db
            Ball_HorizontalDirection db
            Ball_VerticalDirection db
+           
+           Paddle1_Y db
+           Paddle2_Y db
 
            Hub_VDPStatus db
            Hub_GameState db
@@ -109,6 +112,7 @@ MainLoop:                                                      ;
            call WaitForFrameInterrupt                          ;
            call Loader                                         ;
            call Ball                                           ;
+           call Paddles                                        ;
            call Hub                                            ;
            jp MainLoop                                         ;
 .ends                                                          ;
@@ -337,6 +341,32 @@ _ResetBall:
 
            _SwitchVectors: .dw _0 _1
 .ends
+
+; --------------------------------------------------------------
+.section "Paddles" free
+; --------------------------------------------------------------
+Paddles:
+; We will handle both paddles in this section.
+           ; Switch according to current game state.
+           ld a,(Hub_GameState)
+           ld de,_SwitchVectors
+           call GetVector
+           jp (hl)
+
+; Initialize the paddles:
+_0:
+           jp _EndSwitch
+
+; Match mode. Make paddles respond to player/AI input:
+_1:
+           jp _EndSwitch
+
+_EndSwitch:
+           ret
+
+           _SwitchVectors: .dw _0 _1
+.ends
+
 
 ; --------------------------------------------------------------
 .section "Hub" free

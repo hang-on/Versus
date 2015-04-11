@@ -556,11 +556,17 @@ Score:
            call GetVector
            jp (hl)
 
-_0:        ; Initialize the name table buffer (0:0)
+_0:        ; Initialize the name table buffer (0:0).
            ld hl,NameTableInitializationData
            ld de,NameTableBuffer
            ld bc,3*7*2
            ldir
+
+           ; Initialize score.
+           xor a
+           ld (Score_Player1),a
+           ld (Score_Player2),a
+
            jp _EndSwitch
 
 _1:        ; Is player 1 scoring (status flag set by the ball)?

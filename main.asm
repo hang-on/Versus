@@ -1,6 +1,9 @@
 ; Setup the SDSC tag, including correct chekcsum:
            .sdsctag 0.1, "Versus", ReleaseNotes, "Anders S. Jensen"
 
+; Libray of minor routines:
+           .include "MinorRoutines.inc"
+
 ; Organize read only memory:
            ; Three rom slots a' 16K. Assume standard Sega mapper
            ; with bankswitching in slot 2.
@@ -25,6 +28,8 @@
            .enum $c000 export
            SATBuffer dsb 16 + 32
            FrameInterruptFlag db
+           Joystick1 db
+           Joystick2 db
 
            Ball_X db
            Ball_Y db
@@ -32,7 +37,7 @@
            Ball_VerticalSpeed db
            Ball_HorizontalDirection db
            Ball_VerticalDirection db
-           
+
            Paddle1_Y db
            Paddle2_Y db
 
@@ -65,9 +70,6 @@
 ; Pause interrupt handler:
            retn
 
-.section "Minor routines and helper functions" free
-           .include "MinorRoutines.inc"
-.ends
 
 ; --------------------------------------------------------------
 .section "Memory initialization" free

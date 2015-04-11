@@ -1,4 +1,6 @@
 ; --------------------------------------------------------------
+.section "Prepare VRAM" free
+; --------------------------------------------------------------
 ; PREPARE VRAM.
 ; Set up vdp to recieve data at vram address in HL.
 PrepareVRAM:
@@ -10,7 +12,10 @@ PrepareVRAM:
            out ($bf),a
            pop af
            ret
+.ends
 
+; --------------------------------------------------------------
+.section "Load VRAM" free
 ; --------------------------------------------------------------
 ; LOAD VRAM.
 ; Load BC amount of bytes from data source pointed to by HL.
@@ -24,7 +29,10 @@ LoadVRAM:
            or b
            jp nz,LoadVRAM
            ret
+.ends
 
+; --------------------------------------------------------------
+.section "Fill memory" free
 ; --------------------------------------------------------------
 ; FILL MEMORY.
 ; Overwrite a chunk of memory with a specified byte value.
@@ -40,7 +48,10 @@ FillMemory:
            ret z
            ldir
            ret
+.ends
 
+; --------------------------------------------------------------
+.section "Set VDP Register" free
 ; --------------------------------------------------------------
 ; SET VDP REGISTER.
 ; Write to target register.
@@ -52,7 +63,10 @@ SetRegister:
            or b
            out ($bf),a
            ret
+.ends
 
+; --------------------------------------------------------------
+.section "Get Vector" free
 ; --------------------------------------------------------------
 ; GET VECTOR.
 ; Vector table based switch-like control structure.
@@ -68,6 +82,7 @@ GetVector:
            ld h,(hl)
            ld l,a
            ret
+.ends
 
 ; --------------------------------------------------------------
 .section "Wait for frame interrupt" free

@@ -139,7 +139,8 @@ Loader:
            jp (hl)
 
 ; Load assets for a match:
-_0:        ; Update vdp register.
+_0:
+           ; Update vdp register.
            ld a,%10100000
            ld b,1
            call SetRegister
@@ -238,7 +239,7 @@ _1:        ld a,%11100000
 
            jp _EndSwitch
 
-_2:        ; Unused at the moment
+_2:
            jp _EndSwitch
 
 _EndSwitch:

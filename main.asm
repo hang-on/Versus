@@ -556,19 +556,14 @@ Score:
            call GetVector
            jp (hl)
 
-_0:
-
-           ; Initialize the name table buffer (0:0)
-
-       ld hl,NameTableInitializationData        ; score is 0:0.
-       ld de,NameTableBuffer        ; point to buffer.
-       ld bc,3*7*2         ; write those name table words.
-       ldir
-
+_0:        ; Initialize the name table buffer (0:0)
+           ld hl,NameTableInitializationData
+           ld de,NameTableBuffer
+           ld bc,3*7*2
+           ldir
            jp _EndSwitch
 
-_1:
-           ; Is player 1 scoring (status flag set by the ball)?
+_1:        ; Is player 1 scoring (status flag set by the ball)?
            ld a,(Hub_Status)
            bit 0,a
            jp z,+
@@ -592,59 +587,55 @@ _1:
            inc a
            ld (Score_Player2),a
 +
+           ; Update the name table buffer.
+           ld a,(Score_Player1)
+           cp 0
+           jp z,+
+           ld b,a
+           xor a
+-          add a,6
+           djnz -
++          add a,16
 
-; UPDATE SCORE NAME TABLE BUFFER.
-; Point to correct tile index (6 * score + 16).
+           ; Now A holds the index of the first tile of the
+           ; relevant digit.
+           ld ix,NameTableBuffer
+           ld (ix+0),a
+           inc a
+           ld (ix+2),a
+           inc a
+           ld (ix+14),a
+           inc a
+           ld (ix+16),a
+           inc a
+           ld (ix+28),a
+           inc a
+           ld (ix+30),a
 
-           ld a,(Score_Player1)           ; get score (player 1).
-       cp 0                ; special case = score is 0.
-       jp z,+              ; if score = 0, then skip multiply.
-       ld b,a              ; put score in counter (B).
-       xor a               ; reset A.
--      add a,6             ; add 6 to A,
-       djnz -              ; for every point the player has got.
-+      add a,16            ; add 16 to the product.
+           ; Point to correct tile index (6 * score + 16).
+           ld a,(Score_Player2)
+           cp 0
+           jp z,+
+           ld b,a
+           xor a
+-          add a,6
+           djnz -
++          add a,16
 
-; Now A holds the index of the first tile of the relevant digit.
-
-       ld ix,NameTableBuffer        ; point IX to the name table buffer.
-       ld (ix+0),a         ; put digit tile into buffer.
-       inc a               ; next digit tile.
-       ld (ix+2),a         ; put it into the buffer, etc...
-       inc a
-       ld (ix+14),a
-       inc a
-       ld (ix+16),a
-       inc a
-       ld (ix+28),a
-       inc a
-       ld (ix+30),a
-
-; Point to correct tile index (6 * score + 16).
-
-       ld a,(Score_Player2)           ; get score (player 2).
-       cp 0                ; special case = score is 0.
-       jp z,+              ; if score = 0, then skip multiply.
-       ld b,a              ; put score in counter (B).
-       xor a               ; reset A.
--      add a,6             ; add 6 to A,
-       djnz -              ; for every point the player has got.
-+      add a,16            ; add 16 to the product.
-
-; Now A holds the index of the first tile of the relevant digit.
-
-       ld ix,NameTableBuffer        ; point IX to the name table buffer.
-       ld (ix+10),a         ; put digit tile into buffer.
-       inc a               ; next digit tile.
-       ld (ix+12),a         ; put it into the buffer, etc...
-       inc a
-       ld (ix+24),a
-       inc a
-       ld (ix+26),a
-       inc a
-       ld (ix+38),a
-       inc a
-       ld (ix+40),a
+           ; Now A holds the index of the first tile of the
+           ; relevant digit.
+           ld ix,NameTableBuffer
+           ld (ix+10),a
+           inc a
+           ld (ix+12),a
+           inc a
+           ld (ix+24),a
+           inc a
+           ld (ix+26),a
+           inc a
+           ld (ix+38),a
+           inc a
+           ld (ix+40),a
 
            jp _EndSwitch
 

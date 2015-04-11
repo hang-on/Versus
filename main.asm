@@ -701,12 +701,15 @@ _0:        ; Put sprite terminator in the SAT buffer.
 _1:        jp _EndSwitch
 
 ; State 2: Pre-match.
-_2:
+_2:        ; Wait for keypress.
+           ld a,(Joystick1)
+           cp $ff
+           jp z,+
 
            ; Start match.
            ld a,1
            ld (Hub_GameState),a
-
++
            jp _EndSwitch
 
 _EndSwitch:

@@ -31,6 +31,9 @@
            Joystick1 db
            Joystick2 db
 
+           Player1_Score db
+           Player2_Score db
+
            Ball_X db
            Ball_Y db
            Ball_HorizontalSpeed db
@@ -302,6 +305,24 @@ _1:
            sub (hl)
            ld (Ball_X),a
 ++         ; end of move ball section.
+
+           ; Is the ball in player 1's goal zone?
+           ld a,(Ball_X)        ; get ball x-coordinate.
+           cp 3                ; player 1 goal zone: 0-2.
+           jp nc,+         ; jump to next test if ball x > 2.
+           call _ResetBall         ; reset ball.
+           ld hl,Player2_Score
+           inc (hl)
+
+           ; Is ball x in player 2's goal zone?
++          ld a,(Ball_X)        ; get ball x-coordinate.
+           cp 253              ; player 2 goal zone: 253-255.
+           jp c,+          ; end goal zone tests if ball x < 253.
+           call _ResetBall         ; reset ball.
+           ld hl,Player1_Score
+           inc (hl)
++          ; end of goal zone testing section.
+
 
            jp _EndSwitch
 

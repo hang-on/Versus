@@ -375,57 +375,56 @@ _DetectCollision:
 
            ; First test: Is the ball within the paddle's
            ; horizontal collision zone?
-           ld a,(Ball_X)        ; load ball x-coordinate.
-           sub b               ; ball to the left of the zone?
-           ret c               ; yes? - return.
-           ld a,(Ball_X)        ; no? - load ball x again.
-           inc b               ; increment B to right border of
-           inc b               ; collision zone.
-           sub b               ; ball to the right of the zone?
-           ret nc              ; yes? - return.
+           ld a,(Ball_X)
+           sub b
+           ret c
+           ld a,(Ball_X)
+           inc b
+           inc b
+           sub b
+           ret nc
 
            ; Second test: Is the ball over the paddle?
            ; Math: (ball y + paddle height) - paddle y < 0.
-           ld a,(Ball_Y)        ; get ball y-coordinate.
-           ld b,8              ; get ball height (one tile).
-           add a,b             ; add them together in accumulator.
-           sub (hl)            ; subtract paddle y from accumulator.
-           ret c               ; return if ball is over paddle.
+           ld a,(Ball_Y)
+           ld b,8
+           add a,b
+           sub (hl)
+           ret c
 
            ; Third test: Is the ball under the paddle?
            ; Math: (paddle y + paddle height) - ball y < 0.
+           ld a,(Ball_Y)
+           ld d,a
+           ld a,(hl)
+           ld b,26
+           add a,b
+           sub d
+           ret c
 
-           ld a,(Ball_Y)        ; get ball y-coordinate.
-           ld d,a              ; save it in D for later.
-           ld a,(hl)           ; get paddle y-coordinate.
-           ld b,26             ; get paddle height (ca. 3 tiles).
-           add a,b             ; put the sum in the accumulator.
-           sub d               ; subtract ball y from accumulator.
-           ret c               ; return if ball is under paddle.
-
-           ; If we get here, it means that the ball and paddle collides!
+           ; If we get here, it means collision is happening!
            ; First, change the direction of the ball (bounce).
-
            ld a,c
            ld (Ball_HorizontalDirection),a
 
            ; Second, calculate where the ball hits the paddle,
-           ; and adjust the ball's vertical direction accordingly.
-           ; (paddle y + half paddle height) - (ball y + ball height) < 0.
+           ; and adjust the ball's vertical direction,
+           ; Math: (paddle y + half paddle height) -
+           ; (ball y + ball height) < 0.
 
-           ld a,(Ball_Y)        ; get ball y-coordinate.
-           add a,6             ; add ball height.
-           ld b,a              ; save it in B for later.
-           ld a,(hl)           ; store paddle y in accumulator.
-           add a,13            ; add half paddle height.
-           sub b               ; subtract (refer to the equation).
-           jp nc,+             ; >= 0? Lower part of paddle is hit.
-           ld a,0              ; < 0? Upper part of paddle is hit,
-           ld (Ball_VerticalDirection),a         ; so make the ball go north,
-           ret                 ; and return.
-+          ld a,1              ; make the ball go south by adjusting
-           ld (Ball_VerticalDirection),a         ; the vertical direction.
-           ret                 ; return.
+           ld a,(Ball_Y)
+           add a,6
+           ld b,a
+           ld a,(hl)
+           add a,13
+           sub b
+           jp nc,+
+           ld a,0
+           ld (Ball_VerticalDirection),a
+           ret
++          ld a,1
+           ld (Ball_VerticalDirection),a
+           ret
 
            _SwitchVectors: .dw _0 _1
 .ends

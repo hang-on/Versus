@@ -198,7 +198,6 @@ _0:
            ld a,%11110000
            ld b,7
            call SetRegister
-           
 
            jp _EndSwitch
 
@@ -208,26 +207,6 @@ _1:        ld a,%11100000
            ld b,1
            call SetRegister
 
-           call _LoadBuffers
-
-           jp _EndSwitch
-
-; Pre-match:
-_2:
-           ld a,%11100000
-           ld b,1
-           call SetRegister
-
-           call _LoadBuffers
-
-           jp _EndSwitch
-
-_EndSwitch:
-
-; Return to main loop:
-           ret
-
-_LoadBuffers:
            ; Load buffer contents to SAT in VRAM.
            ld hl,$3f00
            call PrepareVRAM
@@ -258,6 +237,15 @@ _LoadBuffers:
            ld hl,NameTableBuffer+28
            ld bc,14
            call LoadVRAM
+
+           jp _EndSwitch
+
+; Pre-match: Behave just like match.
+_2:        jp _1
+
+_EndSwitch:
+
+; Return to main loop:
            ret
 
            _SwitchVectors: .dw _0 _1 _2

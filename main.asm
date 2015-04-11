@@ -216,6 +216,8 @@ _2:        ; Unused at the moment
            jp _EndSwitch
 
 _EndSwitch:
+
+; Return to main loop:
            ret
 
            _SwitchVectors: .dw _0 _1 _2
@@ -308,7 +310,7 @@ _EndSwitch:
            ld a,(Ball_X)
            ld (SATBuffer+16),a
 
-; Return from ball routine.
+; Return to main loop.
            ret
 
 _ResetBall:
@@ -422,6 +424,7 @@ _2:        jp _EndSwitch
 
 _EndSwitch:
 
+; Return to main loop:
            ret
 
            _SwitchVectors: .dw _0 _1 _2

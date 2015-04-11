@@ -364,20 +364,18 @@ _0:
 
 ; Match mode. Make paddles respond to player/AI input:
 _1:
+           ; Move paddle 1 with player 1 joystick.
+           ld hl,Paddle1_Y
+           ld a,(Joystick1)
+           call _MovePaddle
 
-           ; Position paddle 1.
-           ld hl,Paddle1_Y         ; point to paddle 1 y coordinate.
-           ld a,(Joystick1)         ; get joystick port 1 (rev. bits).
-           call padpos         ; make paddle 1 respond to joystick.
-
-           ; Position paddle 2.
-
-           ld hl,Paddle2_Y         ; point to paddle 2 y coordinate.
-           ld a,(Joystick1)         ; get joystick port 1 (rev. bits).
-           rla                 ; rotate the bits three times so
-           rla                 ; bits 0 and 1 is up and down on
-           rla                 ; player 2's joystick.
-           call padpos         ; make paddle 2 respond to joystick.
+           ; Move paddle 2 with player 2 joystick.
+           ld hl,Paddle2_Y
+           ld a,(Joystick1)
+           rla
+           rla
+           rla
+           call _MovePaddle
 
            jp _EndSwitch
 
@@ -393,29 +391,27 @@ _EndSwitch:
 ; Return to main loop:
            ret
 
-; UPDATE PADDLE POSITION (PADPOS).
-; Update the position of a paddle by responding to a joystick.
-; HL = pointer to paddle y-coordinate.
-; A = bits 0 and 1 are up and down (as read from i/o port).
-
-padpos push af
-       bit 0,a             ; is player 1 pressing up?
-       jp nz,+             ; no? skip the following.
-       ld a,24             ; yes? load paddle top limit.
-       cp (hl)             ; is paddle at the top limit?
-       jp z,+              ; yes? skip the following.
-       dec (hl)            ; no? decrease paddle's y-coordinate
-       dec (hl)            ; two times.
-+      pop af              ; get joystick port 1 (rev. bits).
-       bit 1,a             ; is player 1 pressing down?
-       jp nz,+             ; no? skip the following.
-       ld a,144            ; yes? load paddle bottom limit.
-       cp (hl)             ; is paddle at the bottom limit?
-       jp z,+              ; yes? skip the following.
-       inc (hl)            ; no? increase paddle's y-coordinate
-       inc (hl)            ; two times.
-+      ret
-
+_MovePaddle:
+           ; Move paddle vertically by responding to a joystick.
+           ; HL = pointer to paddle y-coordinate.
+           ; A = bits 0 and 1 are up and down (from i/o port).
+           push af
+           bit 0,a
+           jp nz,+
+           ld a,28
+           cp (hl)
+           jp z,+
+           dec (hl)
+           dec (hl)
++          pop af
+           bit 1,a
+           jp nz,+
+           ld a,140
+           cp (hl)
+           jp z,+
+           inc (hl)
+           inc (hl)
++          ret
 
 _SetPaddleSprite:
            ; Updates vertical positions of a paddle's sprites.

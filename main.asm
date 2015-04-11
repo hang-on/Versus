@@ -352,6 +352,10 @@ _0:
            ld de,SATBuffer+18
            ld bc,12
            ldir
+
+           ld a,96
+           ld (Paddle1_Y),a
+           ld (Paddle2_Y),a
            jp _EndSwitch
 
 ; Match mode. Make paddles respond to player/AI input:
@@ -359,7 +363,28 @@ _1:
            jp _EndSwitch
 
 _EndSwitch:
+           ; Generate paddle sprites in the buffer.
+           ld a,(Paddle1_Y)
+           ld hl,SATBuffer+1
+           call _SetPaddleSprite
+           ld a,(Paddle2_Y)
+           ld hl,SATBuffer+4
+           call _SetPaddleSprite
+
+; Return to main loop:
            ret
+
+_SetPaddleSprite:
+           ; Updates vertical positions of a paddle's sprites.
+           ; A = paddle y, HL = pointer to buffer.
+           ld (hl),a           ; first vpos is the y-coordinate.
+           inc hl              ; point to next vpos in buffer.
+           add a,8             ; second sprite is 8 pixels below.
+           ld (hl),a           ; put second vpos in the buffer.
+           inc hl              ; point to third vpos.
+           add a,8             ; again, this is 8 pixels below.
+           ld (hl),a           ; put third vpos in the buffer.
+           ret                 ; return.
 
            _SwitchVectors: .dw _0 _1
 .ends

@@ -693,16 +693,22 @@ _0:        ; Put sprite terminator in the SAT buffer.
            ld hl,SATBuffer+15
            ld (hl),$d0
 
-           ; Change game state to match.
-           ld a,1
+           ; Change game state to pre-match.
+           ld a,2
            ld (Hub_GameState),a
            jp _EndSwitch
 
-; State 1: Match
+; State 1: Match.
 _1:        jp _EndSwitch
 
-; Unused:
-_2:        jp _EndSwitch
+; State 2: Pre-match.
+_2:
+
+           ; Start match.
+           ld a,1
+           ld (Hub_GameState),a
+
+           jp _EndSwitch
 
 _EndSwitch:
 

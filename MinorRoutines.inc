@@ -70,6 +70,8 @@ GetVector:
            ret
 
 ; --------------------------------------------------------------
+.section "Wait for frame interrupt" free
+; --------------------------------------------------------------
 ; WAIT FOR FRAME INTERRUPT.
 ; This will wait exclusively for the frame interrupt.
 ; Unlike the 'halt' opcode.
@@ -80,3 +82,18 @@ WaitForFrameInterrupt:
            xor a
            ld (FrameInterruptFlag),a
            ret
+.ends
+
+; --------------------------------------------------------------
+.section "Read Joysticks" free
+; --------------------------------------------------------------
+; READ JOYSTICKS.
+; Read the two joystick ports (port $dc and $dd) into ram.
+
+ReadJoysticks:
+           in a,$dc
+           ld (Joystick1),a
+           in a,$dd
+           ld (Joystick2),a
+           ret
+.ends

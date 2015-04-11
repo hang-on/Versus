@@ -44,7 +44,7 @@
            Paddle1_Y db
            Paddle2_Y db
 
-           Hub_VDPStatus db
+           VDPStatus db
            Hub_GameState db
            Hub_LoopCounter db
 
@@ -62,7 +62,7 @@
 ; Frame interrupt handler:
            ex af,af'
            in a,$bf
-           ld (Hub_VDPStatus),a
+           ld (VDPStatus),a
            ld a,1
            ld (FrameInterruptFlag),a
            ex af,af'

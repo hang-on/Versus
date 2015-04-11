@@ -28,6 +28,7 @@
            .enum $c000 export
            SATBuffer dsb 16 + 32
            FrameInterruptFlag db
+           VDPStatus db
            Joystick1 db
            Joystick2 db
 
@@ -44,7 +45,6 @@
            Paddle1_Y db
            Paddle2_Y db
 
-           VDPStatus db
            Hub_GameState db
            Hub_LoopCounter db
 
@@ -323,6 +323,20 @@ _1:
            inc (hl)
 +          ; end of goal zone testing section.
 
+; Third ball test: Is it colliding with one of the paddles?
+; Check collision on paddle 1.
+
+       ld hl,Paddle1_Y         ; point to paddle 1 y-coordinate.
+       ld b,17             ; load left border of coll. zone.
+       ld c,1              ; ball will bounce right.
+       call _DetectCollision         ; collision test and bouncing.
+
+; Check collision on paddle 2.
+
+       ld hl,Paddle2_Y         ; point to paddle 2 y-coordinate.
+       ld b,238            ; left border of coll. zone.
+       ld c,0              ; ball will bounce left.
+       call _DetectCollision         ; collision test and bouncing.
 
            jp _EndSwitch
 
@@ -356,6 +370,70 @@ _ResetBall:
 +          dec a
            ld (Ball_HorizontalDirection),a
            ret
+
+; COLLISION DETECTION (COLLIS).
+; Detect collision between a paddle and the ball, and bounce
+; the ball (change the ball's hdir) in the event of a collision.
+; HL = pointer to paddle y,
+; B = collision zone left border, C = new hdir for bouncing.
+
+; First test: Is the ball within the paddle's horizontal
+; collision zone?
+
+_DetectCollision:
+           ld a,(Ball_X)        ; load ball x-coordinate.
+       sub b               ; ball to the left of the zone?
+       ret c               ; yes? - return.
+       ld a,(Ball_X)        ; no? - load ball x again.
+       inc b               ; increment B to right border of
+       inc b               ; collision zone.
+       sub b               ; ball to the right of the zone?
+       ret nc              ; yes? - return.
+
+; Second test: Is the ball over the paddle?
+; Math: (ball y + paddle height) - paddle y < 0.
+
+       ld a,(Ball_Y)        ; get ball y-coordinate.
+       ld b,8              ; get ball height (one tile).
+       add a,b             ; add them together in accumulator.
+       sub (hl)            ; subtract paddle y from accumulator.
+       ret c               ; return if ball is over paddle.
+
+; Third test: Is the ball under the paddle?
+; Math: (paddle y + paddle height) - ball y < 0.
+
+       ld a,(Ball_Y)        ; get ball y-coordinate.
+       ld d,a              ; save it in D for later.
+       ld a,(hl)           ; get paddle y-coordinate.
+       ld b,26             ; get paddle height (ca. 3 tiles).
+       add a,b             ; put the sum in the accumulator.
+       sub d               ; subtract ball y from accumulator.
+       ret c               ; return if ball is under paddle.
+
+; If we get here, it means that the ball and paddle collides!
+; First, change the direction of the ball (bounce).
+
+       ld a,c              ; load the bounce direction into A.
+       ld (Ball_HorizontalDirection),a         ; update hdir with new value.
+
+; Second, calculate where on the paddle the ball hits, and
+; adjust the vertical direction accordingly.
+; (paddle y + half paddle height) - (ball y + ball height) < 0.
+
+       ld a,(Ball_Y)        ; get ball y-coordinate.
+       add a,6             ; add ball height.
+       ld b,a              ; save it in B for later.
+       ld a,(hl)           ; store paddle y in accumulator.
+       add a,13            ; add half paddle height.
+       sub b               ; subtract (refer to the equation).
+       jp nc,+             ; >= 0? Lower part of paddle is hit.
+       ld a,0              ; < 0? Upper part of paddle is hit,
+       ld (Ball_VerticalDirection),a         ; so make the ball go north,
+       ret                 ; and return.
++      ld a,1              ; make the ball go south by adjusting
+       ld (Ball_VerticalDirection),a         ; the vertical direction.
+       ret                 ; return.
+
 
            _SwitchVectors: .dw _0 _1
 .ends
@@ -457,7 +535,7 @@ Hub:
            ; Increment loop counter at every loop.
            ld hl,Hub_LoopCounter
            inc (hl)
-           
+
            ; Read joystick port into ram.
            call ReadJoysticks
 

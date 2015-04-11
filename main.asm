@@ -364,6 +364,10 @@ _1:
            call _DetectCollision
 
            jp _EndSwitch
+           
+_2:
+           jp _EndSwitch
+
 
 _EndSwitch:
            ; Update ball data in the SAT buffer.
@@ -454,7 +458,7 @@ _DetectCollision:
            ld (Ball_VerticalDirection),a
            ret
 
-           _SwitchVectors: .dw _0 _1
+           _SwitchVectors: .dw _0 _1 _2
 .ends
 
 ; --------------------------------------------------------------
@@ -495,6 +499,9 @@ _1:
            rla
            call _MovePaddle
 
+           jp _EndSwitch
+
+_2:
            jp _EndSwitch
 
 _EndSwitch:
@@ -543,7 +550,7 @@ _SetPaddleSprite:
            ld (hl),a           ; put third vpos in the buffer.
            ret                 ; return.
 
-           _SwitchVectors: .dw _0 _1
+           _SwitchVectors: .dw _0 _1 _2
 .ends
 
 ; --------------------------------------------------------------
@@ -645,12 +652,16 @@ _1:        ; Is player 1 scoring (status flag set by the ball)?
 
            jp _EndSwitch
 
+_2:
+           jp _EndSwitch
+
+
 _EndSwitch:
 
 ; Return to main loop:
            ret
 
-           _SwitchVectors: .dw _0 _1
+           _SwitchVectors: .dw _0 _1 _2
 
 .ends
 
@@ -665,7 +676,7 @@ Hub:
 
            ; Read joystick port into ram.
            call ReadJoysticks
-           
+
            ; Reset score signal.
            ld a,(Hub_Status)
            and %11111100

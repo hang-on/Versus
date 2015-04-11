@@ -48,6 +48,8 @@
            Hub_GameState db
            Hub_LoopCounter db
            Hub_Status db
+           
+           NameTableBuffer dsb 3*7*2
            .ende
 
 ; Beginning of ROM:
@@ -216,6 +218,24 @@ _1:        ld a,%11100000
            ld b,32
            ld c,$be
            otir
+
+           ; Draw the two score digits on the playfield.
+           ld hl,$38da
+           call PrepareVRAM
+           ld hl,NameTableBuffer
+           ld bc,14
+           call LoadVRAM
+           ld hl,$391a
+           call PrepareVRAM
+           ld hl,NameTableBuffer+14
+           ld bc,14
+           call LoadVRAM
+           ld hl,$395a
+           call PrepareVRAM
+           ld hl,NameTableBuffer+28
+           ld bc,14
+           call LoadVRAM
+
            jp _EndSwitch
 
 _2:        ; Unused at the moment

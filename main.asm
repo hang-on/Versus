@@ -32,9 +32,6 @@
            Joystick1 db
            Joystick2 db
 
-           Player1_Score db
-           Player2_Score db
-
            Ball_X db
            Ball_Y db
            Ball_HorizontalSpeed db
@@ -45,9 +42,12 @@
            Paddle1_Y db
            Paddle2_Y db
 
+           Score_Player1 db
+           Score_Player2 db
+
            Hub_GameState db
            Hub_LoopCounter db
-
+           Hub_Status db
            .ende
 
 ; Beginning of ROM:
@@ -118,6 +118,7 @@ MainLoop:                                                      ;
            call Loader                                         ;
            call Ball                                           ;
            call Paddles                                        ;
+           call Score                                          ;
            call Hub                                            ;
            jp MainLoop                                         ;
 .ends                                                          ;
@@ -311,16 +312,23 @@ _1:
            cp 3
            jp nc,+
            call _ResetBall
-           ld hl,Player2_Score
-           inc (hl)
+
+           ; Signal to the hub that player 2 is scoring.
+           ld a,(Hub_Status)
+           or %00000010
+           ld (Hub_Status),a
 
            ; Is ball x in player 2's goal zone?
 +          ld a,(Ball_X)
            cp 253
            jp c,+
            call _ResetBall
-           ld hl,Player1_Score
-           inc (hl)
+
+           ; Signal to the hub that player 1 is scoring.
+           ld a,(Hub_Status)
+           or %00000001
+           ld (Hub_Status),a
+
 +          ; end of goal zone testing section.
 
            ; Check collision with paddle 1.
@@ -518,6 +526,15 @@ _SetPaddleSprite:
            _SwitchVectors: .dw _0 _1
 .ends
 
+; --------------------------------------------------------------
+.section "Score" free
+; --------------------------------------------------------------
+Score:
+
+
+           ret
+.ends
+
 
 ; --------------------------------------------------------------
 .section "Hub" free
@@ -529,6 +546,11 @@ Hub:
 
            ; Read joystick port into ram.
            call ReadJoysticks
+           
+           ; Reset score signal.
+           ld a,(Hub_Status)
+           and %11111100
+           ld (Hub_Status),a
 
            ; Switch according to current game state.
            ld a,(Hub_GameState)

@@ -55,5 +55,11 @@ PaddleTiles .include "PaddleTiles.inc"
 PaddleSATInitializationData:
            .db 11 01 11 02 11 03
            .db 244 01 244 02 244 03
+           
+NameTableInitializationData:
+           .db 22 00 23 00 01 00 02 00 01 000 00 00 00 00
+           .db 24 00 25 00 01 00 02 00 01 000 00 00 00 00
+           .db 26 00 27 00 01 00 02 00 01 000 00 00 00 00
+
 
 

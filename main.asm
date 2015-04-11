@@ -185,13 +185,6 @@ _0:        ; Update vdp register.
            ld bc,3 * 32
            call LoadVRAM
 
-           ; Place the sprite terminator in sat.
-           ld hl,$3f00+15
-           call PrepareVRAM
-           ld a,$d0
-           ld c,$be
-           out (c),a
-
            ; Set the border color.
            ld a,%11110000
            ld b,7
@@ -355,6 +348,10 @@ Paddles:
 
 ; Initialize the paddles:
 _0:
+           ld hl, PaddleSATInitializationData
+           ld de,SATBuffer+18
+           ld bc,12
+           ldir
            jp _EndSwitch
 
 ; Match mode. Make paddles respond to player/AI input:
@@ -383,7 +380,11 @@ Hub:
            jp (hl)
 
 ; State 0: Initialization.
-_0:        ; Change game state to match.
+_0:        ; Put sprite terminator in the SAT buffer.
+           ld hl,SATBuffer+15
+           ld (hl),$d0
+
+           ; Change game state to match.
            ld a,1
            ld (Hub_GameState),a
            jp _EndSwitch

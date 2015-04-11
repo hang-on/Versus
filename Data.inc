@@ -52,3 +52,8 @@ SpritePalette .include "Sprites_Palette.inc"
 BallTile .include "Balltile.inc"
 PaddleTiles .include "PaddleTiles.inc"
 
+PaddleSATInitializationData:
+           .db 11 01 11 02 11 03
+           .db 244 01 244 02 244 03
+
+

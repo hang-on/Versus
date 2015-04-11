@@ -530,7 +530,30 @@ _SetPaddleSprite:
 .section "Score" free
 ; --------------------------------------------------------------
 Score:
+           ; Is player 1 scoring (status flag set by the ball)?
+           ld a,(Hub_Status)
+           bit 0,a
+           jp z,+
 
+           ; Increment score if it is below 9.
+           ld a,(Score_Player1)
+           cp 9
+           jp z,+
+           inc a
+           ld (Score_Player1),a
+
+           ; Is player 2 scoring?
++          ld a,(Hub_Status)
+           bit 1,a
+           jp z,+
+
+           ; Increment score if it is below 9.
+           ld a,(Score_Player2)
+           cp 9
+           jp z,+
+           inc a
+           ld (Score_Player2),a
++
 
            ret
 .ends

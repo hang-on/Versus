@@ -108,6 +108,10 @@ InitializeFramework:
            inc c
            djnz -
 
+           ; Start main loop in state 4: Initialise session.
+           ld a,4
+           ld (Hub_GameState),a
+
            ei
            jp MainLoop
 .ends
@@ -140,6 +144,58 @@ Loader:
 
 ; Load assets for a match:
 _0:
+           ; Get rid of pre-match menu overlay...
+
+           jp _EndSwitch
+
+; Match: Just keep the display enabled, update the sprite table
+; and the score digits in the name table.
+_1:        ld a,%11100000
+           ld b,1
+           call SetRegister
+
+           ; Load buffer contents to SAT in VRAM.
+           ld hl,$3f00
+           call PrepareVRAM
+           ld hl,SATBuffer
+           ld b,16
+           ld c,$be
+           otir
+           ld hl,$3f80
+           call PrepareVRAM
+           ld hl,SATBuffer+16
+           ld b,32
+           ld c,$be
+           otir
+
+           ; Draw the two score digits on the playfield.
+           ld hl,$38da
+           call PrepareVRAM
+           ld hl,NameTableBuffer
+           ld bc,14
+           call LoadVRAM
+           ld hl,$391a
+           call PrepareVRAM
+           ld hl,NameTableBuffer+14
+           ld bc,14
+           call LoadVRAM
+           ld hl,$395a
+           call PrepareVRAM
+           ld hl,NameTableBuffer+28
+           ld bc,14
+           call LoadVRAM
+
+           jp _EndSwitch
+
+; Pre-match: Behave just like match.
+_2:        jp _1
+
+; Initialize pre-match
+_3:
+           jp _EndSwitch
+
+; Initialize session
+_4:
            ; Update vdp register.
            ld a,%10100000
            ld b,1
@@ -201,57 +257,6 @@ _0:
 
            jp _EndSwitch
 
-; Match: Just keep the display enabled, update the sprite table
-; and the score digits in the name table.
-_1:        ld a,%11100000
-           ld b,1
-           call SetRegister
-
-           ; Load buffer contents to SAT in VRAM.
-           ld hl,$3f00
-           call PrepareVRAM
-           ld hl,SATBuffer
-           ld b,16
-           ld c,$be
-           otir
-           ld hl,$3f80
-           call PrepareVRAM
-           ld hl,SATBuffer+16
-           ld b,32
-           ld c,$be
-           otir
-
-           ; Draw the two score digits on the playfield.
-           ld hl,$38da
-           call PrepareVRAM
-           ld hl,NameTableBuffer
-           ld bc,14
-           call LoadVRAM
-           ld hl,$391a
-           call PrepareVRAM
-           ld hl,NameTableBuffer+14
-           ld bc,14
-           call LoadVRAM
-           ld hl,$395a
-           call PrepareVRAM
-           ld hl,NameTableBuffer+28
-           ld bc,14
-           call LoadVRAM
-
-           jp _EndSwitch
-
-; Pre-match: Behave just like match.
-_2:        jp _1
-
-; Initialize pre-match
-_3:
-           jp _EndSwitch
-
-; Initialize session
-_4:
-           jp _EndSwitch
-
-
 _EndSwitch:
 
 
@@ -272,8 +277,8 @@ Ball:
            call GetVector
            jp (hl)
 
-; Initialize/reset the ball:
-_0:        call _ResetBall
+; Initialize match:
+_0:
            jp _EndSwitch
 
 ; Match is playing - update the ball!
@@ -383,6 +388,7 @@ _2:
 
 ; Initialize pre-match:
 _3:
+           call _ResetBall
            jp _EndSwitch
 
 ; Initialize session.
@@ -495,14 +501,6 @@ Paddles:
 
 ; Initialize the paddles:
 _0:
-           ld hl, PaddleSATInitializationData
-           ld de,SATBuffer+18
-           ld bc,12
-           ldir
-
-           ld a,96
-           ld (Paddle1_Y),a
-           ld (Paddle2_Y),a
            jp _EndSwitch
 
 ; Match mode. Make paddles respond to player/AI input:
@@ -531,6 +529,15 @@ _3:
 
 ; Initialize session.
 _4:
+           ld hl, PaddleSATInitializationData
+           ld de,SATBuffer+18
+           ld bc,12
+           ldir
+
+           ld a,96
+           ld (Paddle1_Y),a
+           ld (Paddle2_Y),a
+
            jp _EndSwitch
 
 
@@ -593,12 +600,10 @@ Score:
            call GetVector
            jp (hl)
 
-_0:        ; Initialize the name table buffer (0:0).
-           ld hl,NameTableInitializationData
-           ld de,NameTableBuffer
-           ld bc,3*7*2
-           ldir
-
+_0:
+           xor a
+           ld (Score_Player1),a
+           ld (Score_Player2),a
            jp _EndSwitch
 
 _1:        ; Is player 1 scoring (status flag set by the ball)?
@@ -685,11 +690,7 @@ _1:        ; Is player 1 scoring (status flag set by the ball)?
 
            jp _EndSwitch
 
-_2:        ; Initialize score. Note: But don't update the score
-           ; buffer! The digits still show the final result.
-           xor a
-           ld (Score_Player1),a
-           ld (Score_Player2),a
+_2:
 
            jp _EndSwitch
 
@@ -699,6 +700,11 @@ _3:
 
 ; Initialize session.
 _4:
+           ; Initialize the name table buffer (0:0).
+           ld hl,NameTableInitializationData
+           ld de,NameTableBuffer
+           ld bc,3*7*2
+           ldir
            jp _EndSwitch
 
 _EndSwitch:
@@ -733,7 +739,7 @@ Hub:
            call GetVector
            jp (hl)
 
-; State 0: Initialization.
+; State 0: Initialize match.
 _0:        ; Put sprite terminator in the SAT buffer.
            ld hl,SATBuffer+15
            ld (hl),$d0
@@ -743,9 +749,8 @@ _0:        ; Put sprite terminator in the SAT buffer.
            ld (Hub_GameState),a
            jp _EndSwitch
 
-; State 1: Match.
-_1:
-           ; See if match should end (one player has 9 points).
+; State 1: Run Match.
+_1:        ; See if match should end (one player has 9 points).
            ld a,(Hub_Status)
            bit 2,a
            jp z,+
@@ -771,10 +776,14 @@ _2:        ; Wait for keypress.
 
 ; State 3: Initialize pre-match menu.
 _3:
+           ld a,2
+           ld (Hub_GameState),a
            jp _EndSwitch
 
 ; State 4: Initialize session.
 _4:
+           ld a,3
+           ld (Hub_GameState),a
            jp _EndSwitch
 
 

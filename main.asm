@@ -197,22 +197,24 @@ _1:        ld a,%11100000
 _2:        jp _1
 
 ; Initialize pre-match
-_3:        
-
-           ; Load the tiles into the bank.
+_3:        ; Should we load Menu0? (Nya and Ken are both ready).
+           ld a,(Score_Player1)
+           ld b,a
+           ld a,(Score_Player2)
+           or b
+           jp nz,+
+           ; OK - load Menu0.
            ld hl,$0a00
            call PrepareVRAM
            ld hl,Menu1_Tiles
            ld bc,91*32
            call LoadVRAM
-
-           ; Update the name table.
            ld hl,$3b80
            call PrepareVRAM
            ld hl,Menu1_Tilemap
            ld bc,10*32*2
            call LoadVRAM
-
++
            jp _EndSwitch
 
 ; Initialize session

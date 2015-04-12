@@ -247,13 +247,18 @@ _2:        jp _1
 _3:
            jp _EndSwitch
 
+; Initialize session
+_4:
+           jp _EndSwitch
+
+
 _EndSwitch:
 
 
 ; Return to main loop:
            ret
 
-           _SwitchVectors: .dw _0 _1 _2 _3
+           _SwitchVectors: .dw _0 _1 _2 _3 _4
 .ends
 
 ; --------------------------------------------------------------
@@ -375,10 +380,15 @@ _1:
 
 _2:
            jp _EndSwitch
-           
+
 ; Initialize pre-match:
 _3:
            jp _EndSwitch
+
+; Initialize session.
+_4:
+           jp _EndSwitch
+
 
 _EndSwitch:
            ; Update ball data in the SAT buffer.
@@ -469,7 +479,7 @@ _DetectCollision:
            ld (Ball_VerticalDirection),a
            ret
 
-           _SwitchVectors: .dw _0 _1 _2 _3
+           _SwitchVectors: .dw _0 _1 _2 _3 _4
 .ends
 
 ; --------------------------------------------------------------
@@ -515,8 +525,14 @@ _1:
 _2:
            jp _EndSwitch
 
+; Initialize pre-match menu.
 _3:
            jp _EndSwitch
+
+; Initialize session.
+_4:
+           jp _EndSwitch
+
 
 _EndSwitch:
            ; Generate paddle sprites in the buffer.
@@ -564,7 +580,7 @@ _SetPaddleSprite:
            ld (hl),a           ; put third vpos in the buffer.
            ret                 ; return.
 
-           _SwitchVectors: .dw _0 _1 _2 _3
+           _SwitchVectors: .dw _0 _1 _2 _3 _4
 .ends
 
 ; --------------------------------------------------------------
@@ -681,12 +697,16 @@ _2:        ; Initialize score. Note: But don't update the score
 _3:
            jp _EndSwitch
 
+; Initialize session.
+_4:
+           jp _EndSwitch
+
 _EndSwitch:
 
 ; Return to main loop:
            ret
 
-           _SwitchVectors: .dw _0 _1 _2 _3
+           _SwitchVectors: .dw _0 _1 _2 _3 _4
 
 .ends
 
@@ -737,7 +757,7 @@ _1:
 +
            jp _EndSwitch
 
-; State 2: Pre-match.
+; State 2: Pre-match menu.
 _2:        ; Wait for keypress.
            ld a,(Joystick1)
            cp $ff
@@ -749,16 +769,21 @@ _2:        ; Wait for keypress.
 +
            jp _EndSwitch
 
-; State 3: Initialize pre-match.
+; State 3: Initialize pre-match menu.
 _3:
            jp _EndSwitch
+
+; State 4: Initialize session.
+_4:
+           jp _EndSwitch
+
 
 _EndSwitch:
 
 ; Return to main loop:
            ret
 
-           _SwitchVectors: .dw _0 _1 _2 _3
+           _SwitchVectors: .dw _0 _1 _2 _3 _4
 .ends
 
 

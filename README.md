@@ -4,10 +4,14 @@ GameState:
 
 | Value | Comment                                               |
 | :---: | :---------------------------------------------------- |
-| 0     | Initialize pre-match                                  |
-| 1     | Match                                                 |
-| 2     | Pre-match                                             |
-| 3     | Initiliaze match                                      |
+| 0     | Initialize match                                      |
+| 1     | Run match                                             |
+| 2     | Run pre-match menu                                    |
+| 3     | Initialize pre-match menu                             |
+| 4     | Initialize session                                    |
+
+Typical flow:
+4 > 3 > 2 > 0 > 1 > 3 ....
 
 
 Hub_Status:

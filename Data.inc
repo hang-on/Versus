@@ -55,11 +55,14 @@ PaddleTiles .include "PaddleTiles.inc"
 PaddleSATInitializationData:
            .db 11 01 11 02 11 03
            .db 244 01 244 02 244 03
-           
+
 NameTableInitializationData:
            .db 16 00 17 00 01 00 02 00 01 00 16 00 17 00
            .db 18 00 19 00 01 00 02 00 01 00 18 00 19 00
            .db 20 00 21 00 01 00 02 00 01 00 20 00 21 00
 
+; Pre-match menu, different variations of Nya and Ken.
 
+Menu1_Tiles .include "Menu1_Tiles.inc"
+Menu1_Tilemap .include "Menu1_Tilemap.inc"
 

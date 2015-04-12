@@ -78,3 +78,8 @@ Menu0_Tilemap:
 Menu1_Tiles .include "Menu1_Tiles.inc"
 Menu1_Tilemap .include "Menu1_Tilemap.inc"
 
+Menu2_Tiles .include "Menu2_Tiles.inc"
+Menu2_Tilemap .include "Menu2_Tilemap.inc"
+
+Menu3_Tiles .include "Menu3_Tiles.inc"
+Menu3_Tilemap .include "Menu3_Tilemap.inc"

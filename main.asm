@@ -214,6 +214,7 @@ _3:        ; Should we load Menu0? (Nya and Ken are both ready).
            ld hl,Menu1_Tilemap
            ld bc,10*32*2
            call LoadVRAM
+           jp _EndSwitch
 +
            jp _EndSwitch
 

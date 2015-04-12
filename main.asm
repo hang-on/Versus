@@ -659,6 +659,7 @@ _1:        ; Is player 1 scoring (status flag set by the ball)?
            jp _EndSwitch
 
 _2:        ; Initialize score.
+           ; Note: But don't update the score buffer!
            xor a
            ld (Score_Player1),a
            ld (Score_Player2),a
@@ -709,7 +710,18 @@ _0:        ; Put sprite terminator in the SAT buffer.
            jp _EndSwitch
 
 ; State 1: Match.
-_1:        jp _EndSwitch
+_1:        
+           ; See if match should end (one player has 9 points).
+           ld a,(Hub_Status)
+           bit 2,a
+           jp z,+
+           ld a,2
+           ld (Hub_GameState),a
+           ld a,(Hub_Status)
+           and %11111011
+           ld (Hub_Status),a
++
+           jp _EndSwitch
 
 ; State 2: Pre-match.
 _2:        ; Wait for keypress.

@@ -520,8 +520,9 @@ _1:
 
            jp _EndSwitch
 
-_2:
-           jp _EndSwitch
+; Run pre-match.
+_2:        ; Paddles can move while the menu is displayed.
+           jp _1
 
 ; Initialize pre-match menu.
 _3:
@@ -765,8 +766,8 @@ _1:        ; See if match should end (one player has 9 points).
 ; State 2: Pre-match menu.
 _2:        ; Wait for keypress.
            ld a,(Joystick1)
-           cp $ff
-           jp z,+
+           bit 4,a
+           jp nz,+
 
            ; Start match.
            ld a,1

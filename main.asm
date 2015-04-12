@@ -145,6 +145,12 @@ Loader:
 ; Load assets for a match:
 _0:
            ; Get rid of pre-match menu overlay...
+           ; Update the name table.
+           ld hl,$3b80
+           call PrepareVRAM
+           ld hl,Menu0_Tilemap
+           ld bc,10*32*2
+           call LoadVRAM
 
            jp _EndSwitch
 
@@ -187,11 +193,13 @@ _1:        ld a,%11100000
 
            jp _EndSwitch
 
-; Pre-match: Behave just like match.
+; Run pre-match menu: Behave just like match.
 _2:        jp _1
 
 ; Initialize pre-match
-_3:        ; Load the tiles into the bank.
+_3:        
+
+           ; Load the tiles into the bank.
            ld hl,$0a00
            call PrepareVRAM
            ld hl,Menu1_Tiles
@@ -208,8 +216,7 @@ _3:        ; Load the tiles into the bank.
            jp _EndSwitch
 
 ; Initialize session
-_4:
-           ; Update vdp register.
+_4:        ; Update vdp register.
            ld a,%10100000
            ld b,1
            call SetRegister

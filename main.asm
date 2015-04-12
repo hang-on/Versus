@@ -243,12 +243,17 @@ _1:        ld a,%11100000
 ; Pre-match: Behave just like match.
 _2:        jp _1
 
+; Initialize pre-match
+_3:
+           jp _EndSwitch
+
 _EndSwitch:
+
 
 ; Return to main loop:
            ret
 
-           _SwitchVectors: .dw _0 _1 _2
+           _SwitchVectors: .dw _0 _1 _2 _3
 .ends
 
 ; --------------------------------------------------------------
@@ -367,10 +372,13 @@ _1:
            call _DetectCollision
 
            jp _EndSwitch
-           
+
 _2:
            jp _EndSwitch
-
+           
+; Initialize pre-match:
+_3:
+           jp _EndSwitch
 
 _EndSwitch:
            ; Update ball data in the SAT buffer.
@@ -461,7 +469,7 @@ _DetectCollision:
            ld (Ball_VerticalDirection),a
            ret
 
-           _SwitchVectors: .dw _0 _1 _2
+           _SwitchVectors: .dw _0 _1 _2 _3
 .ends
 
 ; --------------------------------------------------------------
@@ -505,6 +513,9 @@ _1:
            jp _EndSwitch
 
 _2:
+           jp _EndSwitch
+
+_3:
            jp _EndSwitch
 
 _EndSwitch:
@@ -553,7 +564,7 @@ _SetPaddleSprite:
            ld (hl),a           ; put third vpos in the buffer.
            ret                 ; return.
 
-           _SwitchVectors: .dw _0 _1 _2
+           _SwitchVectors: .dw _0 _1 _2 _3
 .ends
 
 ; --------------------------------------------------------------
@@ -658,22 +669,24 @@ _1:        ; Is player 1 scoring (status flag set by the ball)?
 
            jp _EndSwitch
 
-_2:        ; Initialize score. Note: But don't update the score 
+_2:        ; Initialize score. Note: But don't update the score
            ; buffer! The digits still show the final result.
            xor a
            ld (Score_Player1),a
            ld (Score_Player2),a
 
-
            jp _EndSwitch
 
+; Initialize pre-match:
+_3:
+           jp _EndSwitch
 
 _EndSwitch:
 
 ; Return to main loop:
            ret
 
-           _SwitchVectors: .dw _0 _1 _2
+           _SwitchVectors: .dw _0 _1 _2 _3
 
 .ends
 
@@ -736,12 +749,16 @@ _2:        ; Wait for keypress.
 +
            jp _EndSwitch
 
+; State 3: Initialize pre-match.
+_3:
+           jp _EndSwitch
+
 _EndSwitch:
 
 ; Return to main loop:
            ret
 
-           _SwitchVectors: .dw _0 _1 _2
+           _SwitchVectors: .dw _0 _1 _2 _3
 .ends
 
 

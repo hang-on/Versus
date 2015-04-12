@@ -4,9 +4,10 @@ GameState:
 
 | Value | Comment                                               |
 | :---: | :---------------------------------------------------- |
-| 0     | Initialize                                            |
+| 0     | Initialize pre-match                                  |
 | 1     | Match                                                 |
 | 2     | Pre-match                                             |
+| 3     | Initiliaze match                                      |
 
 
 Hub_Status:

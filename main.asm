@@ -252,6 +252,7 @@ _EndSwitch:
 .ends
 
 ; --------------------------------------------------------------
+
 .section "Ball" free
 ; --------------------------------------------------------------
 Ball:
@@ -578,24 +579,32 @@ _1:        ; Is player 1 scoring (status flag set by the ball)?
            bit 0,a
            jp z,+
 
-           ; Increment score if it is below 9.
+           ; Increment score, and check if it is 9 (end match).
            ld a,(Score_Player1)
-           cp 9
-           jp z,+
            inc a
            ld (Score_Player1),a
+           cp 9
+           jp nz,+
+           ; Set status bit to signal match end.
+           ld a,(Hub_Status)
+           or %00000100
+           ld (Hub_Status),a
 
-           ; Is player 2 scoring?
-+          ld a,(Hub_Status)
++           ; Is player 2 scoring?
+           ld a,(Hub_Status)
            bit 1,a
            jp z,+
 
-           ; Increment score if it is below 9.
+           ; Increment score, and check if it is 9 (end match).
            ld a,(Score_Player2)
-           cp 9
-           jp z,+
            inc a
            ld (Score_Player2),a
+           cp 9
+           jp nz,+
+           ; Set status bit to signal match end.
+           ld a,(Hub_Status)
+           or %00000100
+           ld (Hub_Status),a
 +
            ; Update the name table buffer.
            ld a,(Score_Player1)

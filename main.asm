@@ -215,7 +215,34 @@ _3:        ; Should we load Menu0? (Nya and Ken are both ready).
            ld bc,10*32*2
            call LoadVRAM
            jp _EndSwitch
-+
+
++          ; Player 2 (Ken) won last match.
+           ld a,(Score_Player2)
+           cp 9
+           jp nz,+
+           ld hl,$0a00
+           call PrepareVRAM
+           ld hl,Menu2_Tiles
+           ld bc,96*32
+           call LoadVRAM
+           ld hl,$3b80
+           call PrepareVRAM
+           ld hl,Menu2_Tilemap
+           ld bc,10*32*2
+           call LoadVRAM
+           jp _EndSwitch
+
++          ; Player 1 (Nya) won last match.
+           ld hl,$0a00
+           call PrepareVRAM
+           ld hl,Menu3_Tiles
+           ld bc,99*32
+           call LoadVRAM
+           ld hl,$3b80
+           call PrepareVRAM
+           ld hl,Menu3_Tilemap
+           ld bc,10*32*2
+           call LoadVRAM
            jp _EndSwitch
 
 ; Initialize session

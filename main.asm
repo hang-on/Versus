@@ -745,8 +745,8 @@ _0:        ; Put sprite terminator in the SAT buffer.
            ld hl,SATBuffer+15
            ld (hl),$d0
 
-           ; Change game state to pre-match.
-           ld a,2
+
+           ld a,1
            ld (Hub_GameState),a
            jp _EndSwitch
 
@@ -755,7 +755,7 @@ _1:        ; See if match should end (one player has 9 points).
            ld a,(Hub_Status)
            bit 2,a
            jp z,+
-           ld a,2
+           ld a,3
            ld (Hub_GameState),a
            ld a,(Hub_Status)
            and %11111011
@@ -770,7 +770,7 @@ _2:        ; Wait for keypress.
            jp nz,+
 
            ; Start match.
-           ld a,1
+           ld a,0
            ld (Hub_GameState),a
 +
            jp _EndSwitch

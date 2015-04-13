@@ -143,8 +143,7 @@ Loader:
            jp (hl)
 
 ; Load assets for a match:
-_0:
-           ; Get rid of pre-match menu overlay...
+_0:        ; Get rid of pre-match menu overlay...
            ; Update the name table.
            ld hl,$3b80
            call PrepareVRAM
@@ -245,7 +244,7 @@ _3:        ; Should we load Menu0? (Nya and Ken are both ready).
            call LoadVRAM
            jp _EndSwitch
 
-; Initialize session
+; Initialize session.
 _4:        ; Update vdp register.
            ld a,%10100000
            ld b,1
@@ -317,23 +316,19 @@ _EndSwitch:
 .ends
 
 ; --------------------------------------------------------------
-
 .section "Ball" free
 ; --------------------------------------------------------------
-Ball:
-           ; Switch according to current game state.
+Ball:      ; Switch according to current game state.
            ld a,(Hub_GameState)
            ld de,_SwitchVectors
            call GetVector
            jp (hl)
 
 ; Initialize match:
-_0:
-           jp _EndSwitch
+_0:        jp _EndSwitch
 
 ; Match is playing - update the ball!
-_1:
-           ; First: Resolve current state of the ball.
+_1:        ; First: Resolve current state of the ball.
            ; See if ball collides with the bottom border.
            ld a,(Ball_Y)
            cp 169
@@ -433,18 +428,14 @@ _1:
 
            jp _EndSwitch
 
-_2:
-           jp _EndSwitch
+_2:        jp _EndSwitch
 
 ; Initialize pre-match:
-_3:
-           call _ResetBall
+_3:        call _ResetBall
            jp _EndSwitch
 
 ; Initialize session.
-_4:
-           jp _EndSwitch
-
+_4:        jp _EndSwitch
 
 _EndSwitch:
            ; Update ball data in the SAT buffer.
@@ -520,7 +511,6 @@ _DetectCollision:
            ; and adjust the ball's vertical direction,
            ; Math: (paddle y + half paddle height) -
            ; (ball y + ball height) < 0.
-
            ld a,(Ball_Y)
            add a,6
            ld b,a
@@ -550,12 +540,10 @@ Paddles:
            jp (hl)
 
 ; Initialize the paddles:
-_0:
-           jp _EndSwitch
+_0:        jp _EndSwitch
 
 ; Match mode. Make paddles respond to player/AI input:
-_1:
-           ; Move paddle 1 with player 1 joystick.
+_1:        ; Move paddle 1 with player 1 joystick.
            ld hl,Paddle1_Y
            ld a,(Joystick1)
            call _MovePaddle
@@ -575,12 +563,10 @@ _2:        ; Paddles can move while the menu is displayed.
            jp _1
 
 ; Initialize pre-match menu.
-_3:
-           jp _EndSwitch
+_3:        jp _EndSwitch
 
 ; Initialize session.
-_4:
-           ld hl, PaddleSATInitializationData
+_4:        ld hl, PaddleSATInitializationData
            ld de,SATBuffer+18
            ld bc,12
            ldir
@@ -590,7 +576,6 @@ _4:
            ld (Paddle2_Y),a
 
            jp _EndSwitch
-
 
 _EndSwitch:
            ; Generate paddle sprites in the buffer.
@@ -651,8 +636,7 @@ Score:
            call GetVector
            jp (hl)
 
-_0:
-           xor a
+_0:        xor a
            ld (Score_Player1),a
            ld (Score_Player2),a
            jp _EndSwitch
@@ -741,17 +725,13 @@ _1:        ; Is player 1 scoring (status flag set by the ball)?
 
            jp _EndSwitch
 
-_2:
-
-           jp _EndSwitch
+_2:        jp _EndSwitch
 
 ; Initialize pre-match:
-_3:
-           jp _EndSwitch
+_3:        jp _EndSwitch
 
 ; Initialize session.
-_4:
-           ; Initialize the name table buffer (0:0).
+_4:        ; Initialize the name table buffer (0:0).
            ld hl,NameTableInitializationData
            ld de,NameTableBuffer
            ld bc,3*7*2
@@ -771,8 +751,7 @@ _EndSwitch:
 ; --------------------------------------------------------------
 .section "Hub" free
 ; --------------------------------------------------------------
-Hub:
-           ; Increment loop counter at every loop.
+Hub:       ; Increment loop counter at every loop.
            ld hl,Hub_LoopCounter
            inc (hl)
 
@@ -794,7 +773,6 @@ Hub:
 _0:        ; Put sprite terminator in the SAT buffer.
            ld hl,SATBuffer+15
            ld (hl),$d0
-
 
            ld a,1
            ld (Hub_GameState),a
@@ -826,14 +804,12 @@ _2:        ; Wait for keypress.
            jp _EndSwitch
 
 ; State 3: Initialize pre-match menu.
-_3:
-           ld a,2
+_3:        ld a,2
            ld (Hub_GameState),a
            jp _EndSwitch
 
 ; State 4: Initialize session.
-_4:
-           ld a,3
+_4:        ld a,3
            ld (Hub_GameState),a
            jp _EndSwitch
 
@@ -851,8 +827,8 @@ _EndSwitch:
 .bank 1 slot 1
 .section "Bank 1: Misc" free
 ReleaseNotes:
-.db "Pong. The world can never be saturated with clones of this"
-.db " retro-gaming classic. May I present: Nya -versus- Ken!" 0
+           .db "Pong. The world can never be saturated with clones of this"
+           .db " retro-gaming classic. May I present: Nya -versus- Ken!" 0
 .ends
 
 

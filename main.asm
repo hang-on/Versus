@@ -1,9 +1,6 @@
 ; Setup the SDSC tag, including correct chekcsum:
            .sdsctag 0.1, "Versus", ReleaseNotes, "Anders S. Jensen"
 
-; Libray of minor routines:
-           .include "MinorRoutines.inc"
-
 ; Organize read only memory:
            ; Three rom slots a' 16K. Assume standard Sega mapper
            ; with bankswitching in slot 2.
@@ -13,6 +10,8 @@
            slot 0 $0000
            slot 1 $4000
            slot 2 $8000
+           slotsize $2000 ; RAM
+           slot 3 $c000
            .endme
 
            ; Make a 64K rom
@@ -48,9 +47,15 @@
            Hub_GameState db
            Hub_LoopCounter db
            Hub_Status db
-           
+
            NameTableBuffer dsb 3*7*2
            .ende
+
+; Libray of minor routines:
+           .include "MinorRoutines.inc"
+
+; sverx's PSG library:
+           .include "PSGlib.inc"
 
 ; Beginning of ROM:
 .bank 0 slot 0
@@ -112,6 +117,8 @@ InitializeFramework:
            ld a,4
            ld (Hub_GameState),a
 
+           call PSGInit
+
            ei
            jp MainLoop
 .ends
@@ -125,7 +132,8 @@ MainLoop:                                                      ;
            call Ball                                           ;
            call Paddles                                        ;
            call Score                                          ;
-           call Hub                                            ;
+           call Hub                                            ;                                                               ;
+           call PSGSFXFrame                                    ;
            jp MainLoop                                         ;
 .ends                                                          ;
 ; --------------------------------------------------------------
@@ -339,6 +347,9 @@ _1:        ; First: Resolve current state of the ball.
            ld (Ball_Y),a
            ld a,1
            ld (Ball_VerticalDirection),a
+           ld hl,SFX_Wall
+           ld c,SFX_CHANNEL2
+           call PSGSFXPlay
            jp ++
 
 +          ; See if ball collides with the top border.
@@ -351,6 +362,9 @@ _1:        ; First: Resolve current state of the ball.
            ld (Ball_Y),a
            ld a,0
            ld (Ball_VerticalDirection),a
+           ld hl,SFX_Wall
+           ld c,SFX_CHANNEL2
+           call PSGSFXPlay
 
 ++         ; Second: Move the ball.
            ; Determine if ball should move up or down.
@@ -520,9 +534,15 @@ _DetectCollision:
            jp nc,+
            ld a,0
            ld (Ball_VerticalDirection),a
+           ld hl,SFX_Paddle0
+           ld c,SFX_CHANNEL2
+           call PSGSFXPlay
            ret
 +          ld a,1
            ld (Ball_VerticalDirection),a
+           ld hl,SFX_Paddle1
+           ld c,SFX_CHANNEL2
+           call PSGSFXPlay
            ret
 
            _SwitchVectors: .dw _0 _1 _2 _3 _4
@@ -825,10 +845,17 @@ _EndSwitch:
 
 ; --------------------------------------------------------------
 .bank 1 slot 1
-.section "Bank 1: Misc" free
+.section "Bank 1: Music, sfx and misc." free
+
+SFX_Wall .incbin "Wall.psg"
+SFX_Paddle0 .incbin "Paddle0.psg"
+SFX_Paddle1 .incbin "Paddle1.psg"
+
 ReleaseNotes:
            .db "Pong. The world can never be saturated with clones of this"
            .db " retro-gaming classic. May I present: Nya -versus- Ken!" 0
+
+
 .ends
 
 
@@ -837,3 +864,5 @@ ReleaseNotes:
 .section "Bank 2: Data" free
            .include "Data.inc"
 .ends
+
+

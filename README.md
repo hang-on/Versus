@@ -3,7 +3,7 @@
 Introduction  
 Versus is a Pong clone for the Sega Master System.
 
-Terminology  
+Terminology 
 - **Nya**: Nya is a warm-blooded girl that loves to play Pong but hates to loose. She is player 1's avatar.
 - **Ken**: Ken is Nya's brother, and he is more of a sensitive dreamer, who likes Pong for its intricate connections to Zen philosophy. He is player 2's avatar. In a one-player game, the computer controls Ken.
 - **Match**: Nya and Ken battle it out. Then first to score 9 points wins the match. When a match ends, the game displays the Pre-match menu and waits for user input.

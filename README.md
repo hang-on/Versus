@@ -1,5 +1,5 @@
-# Versus_X
-
+# Introduction
+Versus is a Pong clone for the Sega Master System.
 
 # Terminology
 - **Nya**: Nya is a warm-blooded girl that loves to play Pong but hates to loose. She is player 1's avatar.
@@ -9,7 +9,6 @@
 - **Pre-Match Menu**: A menu that appears on top of the playfield before each match. Its purpose is twofold:
   1. Let the player choose between starting the match, or ending the session by going back to the title screen. 
   2. Show Nya's and Ken's reactions to the outcome of the last match. If this is the first match of the session, then Nya and Ken are shown in a ready-for-action pose.
-
 
 #Hub_GameState  
 The overall state of the game is controlled by the 1 byte variable Hub_GameState. This variable is altered by the Hub object, and it is read by each of the game objects during the main loop. A game object has a script for each game state. This way each object adjusts its behavior depending on the game state.
@@ -25,8 +24,7 @@ The overall state of the game is controlled by the 1 byte variable Hub_GameState
 Typical flow (The value of Hub_GameState):
 4 > 3 > 2 > 0 > 1 > 3 ....
 
-
-#Hub_Status:  
+#Hub_Status  
 This is 8 flags that can be set by any game object. Unlike Hub_GameState, which game objects can read, but only Hub can write to.
 
 | Bit   | Comment                                               |

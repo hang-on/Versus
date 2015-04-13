@@ -616,7 +616,7 @@ _MovePaddle:
            push af
            bit 0,a
            jp nz,+
-           ld a,28
+           ld a,16
            cp (hl)
            jp z,+
            dec (hl)
@@ -624,7 +624,7 @@ _MovePaddle:
 +          pop af
            bit 1,a
            jp nz,+
-           ld a,140
+           ld a,150
            cp (hl)
            jp z,+
            inc (hl)

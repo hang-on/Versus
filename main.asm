@@ -38,6 +38,8 @@
            Ball_HorizontalDirection db
            Ball_VerticalDirection db
            Ball_Timer db
+           Ball_Turbo db
+           Ball_TurboDuration db
 
            Paddle1_Y db
            Paddle2_Y db
@@ -115,7 +117,7 @@ InitializeFramework:
            inc hl
            inc c
            djnz -
-           
+
            ; Set the border color.
            ld a,%11110000
            ld b,7
@@ -400,7 +402,23 @@ _1:        ; If Ball_Timer is > 0, then, decrement it and skip
            ld (Ball_Timer),a
            jp _EndSwitch
 
-+          ; First: Resolve current state of the ball.
++          ; Determine if the ball is in turbo mode.
+           ld a,(Ball_Turbo)
+           cp 0
+           jp nz,+
+           ld a,2
+           ld (Ball_HorizontalSpeed),a
+           ld (Ball_VerticalSpeed),a
+           jp ++
+
++          ; Ball IS in turbo mode.
+           ld a,3
+           ld (Ball_HorizontalSpeed),a
+           ld (Ball_VerticalSpeed),a
+           ld hl,Ball_Turbo
+           dec (hl)
+
+++         ; Resolve current state of the ball.
            ; See if ball collides with the bottom border.
            ld a,(Ball_Y)
            cp 169
@@ -547,6 +565,9 @@ _ResetBall:
            ld a,60
            ld (Ball_Timer),a
 
+           xor a
+           ld (Ball_TurboDuration),a
+
            ld a,127
            ld (Ball_X),a
            ld a,92
@@ -602,7 +623,20 @@ _DetectCollision:
            ret c
 
            ; If we get here, it means collision is happening!
-           ; First, change the direction of the ball (bounce).
+           ; See if max turbo duration is already achieved.
+           ld a,(Ball_TurboDuration)
+           cp 70
+           jp z,+
+           ; Not maxed - increase turbo duration.
+           add a,5
+           ld (Ball_TurboDuration),a
++          ; Renew ball turbo.
+           ld b,a
+           ld a,(Ball_Turbo)
+           add a,b
+           ld (Ball_Turbo),a
+
+          ; First, change the direction of the ball (bounce).
            ld a,c
            ld (Ball_HorizontalDirection),a
 

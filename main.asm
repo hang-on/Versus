@@ -314,13 +314,18 @@ _4:        ; Update vdp register.
 
            jp _EndSwitch
 
+_5:
+
+_6:
+
+
 _EndSwitch:
 
 
 ; Return to main loop:
            ret
 
-           _SwitchVectors: .dw _0 _1 _2 _3 _4
+           _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6
 .ends
 
 ; --------------------------------------------------------------
@@ -451,6 +456,10 @@ _3:        call _ResetBall
 ; Initialize session.
 _4:        jp _EndSwitch
 
+_5:
+
+_6:
+
 _EndSwitch:
            ; Update ball data in the SAT buffer.
            ld a,(Ball_Y)
@@ -545,7 +554,7 @@ _DetectCollision:
            call PSGSFXPlay
            ret
 
-           _SwitchVectors: .dw _0 _1 _2 _3 _4
+           _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6
 .ends
 
 ; --------------------------------------------------------------
@@ -597,6 +606,10 @@ _4:        ld hl, PaddleSATInitializationData
 
            jp _EndSwitch
 
+_5:
+
+_6:
+
 _EndSwitch:
            ; Generate paddle sprites in the buffer.
            ld a,(Paddle1_Y)
@@ -643,7 +656,7 @@ _SetPaddleSprite:
            ld (hl),a           ; put third vpos in the buffer.
            ret                 ; return.
 
-           _SwitchVectors: .dw _0 _1 _2 _3 _4
+           _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6
 .ends
 
 ; --------------------------------------------------------------
@@ -757,13 +770,16 @@ _4:        ; Initialize the name table buffer (0:0).
            ld bc,3*7*2
            ldir
            jp _EndSwitch
+_5:
+
+_6:
 
 _EndSwitch:
 
 ; Return to main loop:
            ret
 
-           _SwitchVectors: .dw _0 _1 _2 _3 _4
+           _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6
 
 .ends
 
@@ -833,13 +849,16 @@ _4:        ld a,3
            ld (Hub_GameState),a
            jp _EndSwitch
 
+_5:
+
+_6:
 
 _EndSwitch:
 
 ; Return to main loop:
            ret
 
-           _SwitchVectors: .dw _0 _1 _2 _3 _4
+           _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6
 .ends
 
 

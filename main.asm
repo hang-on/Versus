@@ -314,10 +314,47 @@ _4:        ; Update vdp register.
 
            jp _EndSwitch
 
-_5:
+; Prepare title screen:
+_5:        ; Disable display.
+           ld a,%10100000
+           ld b,1
+           call SetRegister
 
-_6:
+           ; Load the title screen tiles @ 0
+           ld hl,$0000
+           call PrepareVRAM
+           ld hl,Titlescreen_Tiles
+           ld bc,72*32
+           call LoadVRAM
 
+           ; Load title screen tilemap into name table.
+           ld hl,$3800
+           call PrepareVRAM
+           ld hl,Titlescreen_Tilemap
+           ld bc,32*24*2
+           call LoadVRAM
+
+           ; Load title screen colors into bank 1.
+           ld hl,$c000
+           call PrepareVRAM
+           ld hl,Titlescreen_Palette
+           ld bc,16
+           call LoadVRAM
+
+           ; Set the border color.
+           ld a,%11110000
+           ld b,7
+           call SetRegister
+
+           jp _EndSwitch
+
+; Run title screen:
+_6:        ; Enable display.
+           ld a,%11100000
+           ld b,1
+           call SetRegister
+
+           jp _EndSwitch
 
 _EndSwitch:
 

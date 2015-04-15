@@ -45,7 +45,6 @@
            Paddle2_Y db
 
            Menu_Item db
-           Menu_Debouncing_Counter db
 
            Score_Player1 db
            Score_Player2 db
@@ -1084,8 +1083,12 @@ _1:        ; See if match should end (one player has 9 points).
 +
            jp _EndSwitch
 
-; State 2: Pre-match menu.
-_2:        ; Look for keypress.
+; State 2: Run pre-match menu.
+_2:        ld a,(Hub_LoopCounter)
+           cp 30
+           ret c
+
+           ; Look for keypress.
            ld a,(Joystick1)
            bit 4,a
            jp nz,++
@@ -1105,7 +1108,10 @@ _2:        ; Look for keypress.
            jp _EndSwitch
 
 ; State 3: Initialize pre-match menu.
-_3:        ld a,2
+_3:        xor a
+           ld (Hub_LoopCounter),a
+
+           ld a,2
            ld (Hub_GameState),a
            jp _EndSwitch
 
@@ -1120,12 +1126,19 @@ _5:        ; Play title screen tune.
            ld hl,IntergalacticTableTennis
            call PSGPlay
 
+           xor a
+           ld (Hub_LoopCounter),a
+
            ld a,6
            ld (Hub_GameState),a
            jp _EndSwitch
 
 ; Run title screen.
-_6:        ; Look for keypress.
+_6:        ld a,(Hub_LoopCounter)
+           cp 30
+           ret c
+
+           ; Look for keypress.
            ld a,(Joystick1)
            bit 4,a
            jp nz,_EndSwitch

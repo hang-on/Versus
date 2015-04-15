@@ -60,7 +60,7 @@ each game state. This way each object adjusts its behavior depending on the
 game state.
 
 The numbering is not chronological. Instead the numbers reflect where in the
-development process the corresponding states where implemented.
+development process the corresponding states were implemented.
 
 | Value | Comment                                                              |
 | :---: | :------------------------------------------------------------------- |

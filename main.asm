@@ -730,7 +730,11 @@ Menu:
            call GetVector
            jp (hl)
 
-_0:        ret
+; Prepare match:
+_0:        ; Make the selector disappear.
+           ld a,$d0
+           ld (SATBuffer+7),a
+           ret
 
 _1:        ret
 
@@ -750,10 +754,7 @@ _2:        ; Make selector respond to player 1's joystick.
            ld (SATBuffer+30),a
            ld a,1
            ld (Menu_Item),a
-++
-
-
-           ret
+++         ret
 
 ; Initialize pre-match menu:
 _3:        ld a,$ad

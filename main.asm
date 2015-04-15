@@ -134,6 +134,7 @@ MainLoop:                                                      ;
            call Score                                          ;
            call Hub                                            ;                                                               ;
            call PSGSFXFrame                                    ;
+           call PSGFrame                                       ;
            jp MainLoop                                         ;
 .ends                                                          ;
 ; --------------------------------------------------------------
@@ -882,12 +883,17 @@ _3:        ld a,2
            jp _EndSwitch
 
 ; State 4: Initialize session.
-_4:        ld a,3
+_4:        call PSGStop
+           ld a,3
            ld (Hub_GameState),a
            jp _EndSwitch
 
 ; Prepare title screen.
-_5:        ld a,6
+_5:        ; Play title screen tune.
+           ld hl,IntergalacticTableTennis
+           call PSGPlay
+
+           ld a,6
            ld (Hub_GameState),a
            jp _EndSwitch
 
@@ -917,6 +923,8 @@ _EndSwitch:
 SFX_Wall .incbin "Wall.psg"
 SFX_Paddle0 .incbin "Paddle0.psg"
 SFX_Paddle1 .incbin "Paddle1.psg"
+
+IntergalacticTableTennis .incbin "IntergalacticTableTennis.psg"
 
 Titlescreen_Tiles .include "Titlescreen_Tiles.inc"
 Titlescreen_Palette .include "Titlescreen_Palette.inc"

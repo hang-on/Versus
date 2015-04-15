@@ -463,6 +463,9 @@ _1:        ; First: Resolve current state of the ball.
            cp 3
            jp nc,+
            call _ResetBall
+           ld c,SFX_CHANNELS2AND3
+           ld hl,SFX_Serve
+           call PSGSFXPlay
 
            ; Signal to the hub that player 2 is scoring.
            ld a,(Hub_Status)
@@ -474,6 +477,9 @@ _1:        ; First: Resolve current state of the ball.
            cp 253
            jp c,+
            call _ResetBall
+           ld c,SFX_CHANNELS2AND3
+           ld hl,SFX_Serve
+           call PSGSFXPlay
 
            ; Signal to the hub that player 1 is scoring.
            ld a,(Hub_Status)
@@ -734,6 +740,10 @@ Menu:
 _0:        ; Make the selector disappear.
            ld a,$d0
            ld (SATBuffer+7),a
+           ld c,SFX_CHANNELS2AND3
+           ld hl,SFX_Serve
+           call PSGSFXPlay
+
            ret
 
 _1:        ret
@@ -1069,6 +1079,7 @@ _EndSwitch:
 SFX_Wall .incbin "Wall.psg"
 SFX_Paddle0 .incbin "Paddle0.psg"
 SFX_Paddle1 .incbin "Paddle1.psg"
+SFX_Serve .incbin "SFX_Serve.psg"
 
 IntergalacticTableTennis .incbin "IntergalacticTableTennis.psg"
 

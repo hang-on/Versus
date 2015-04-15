@@ -45,6 +45,7 @@
            Paddle2_Y db
 
            Menu_Item db
+           Menu_Debouncing_Counter db
 
            Score_Player1 db
            Score_Player2 db
@@ -687,6 +688,34 @@ _1:        ; Move paddle 1 with player 1 joystick.
            ld a,(Joystick1)
            call _MovePaddle
 
+           ; See if AI controls Ken.
+           ld a,(Hub_Status)
+           bit 3,a
+           jp z,_Player2Input
+
+           ; OK - AI controls Ken. Move his paddle.
+           ld a,(Ball_Y)
+           ld b,a
+           ld a,(Paddle2_Y)
+           add a,8
+           sub b
+           jp nc,_AIMoveUp
+; AI move down:
+           xor a
+           set 0,a
+           jp +
+
+_AIMoveUp: cp 0
+           jp z,++
+           xor a
+           set 1,a
+
++          ; Move paddle 2 with AI.
+           ld hl,Paddle2_Y
+           call _MovePaddle
+           jp ++
+
+_Player2Input:
            ; Move paddle 2 with player 2 joystick.
            ld hl,Paddle2_Y
            ld a,(Joystick1)
@@ -695,7 +724,7 @@ _1:        ; Move paddle 1 with player 1 joystick.
            rla
            call _MovePaddle
 
-           call _UpdatePaddleSprites
+++         call _UpdatePaddleSprites
 
            jp _EndSwitch
 

@@ -41,15 +41,16 @@ aspects of the game.
   starting from the vertical blanking phase.
 - Object: The main loop parses a list of game objects, i.e. the ball, paddles,
   score, etc. Objects are the main building blocks of the game. An object can
-  read other object's registers, but can only write to it own registers. All
+  read other objects' registers, but can only write to its own registers. All
   objects can set the flags in the Hub_Status register, and this way they can
   communicate with each other. Two special objects exist:
     1. The Hub is the last object to be parsed during each game loop cycle.
-    Its main purpose is to control the Hub_GameState variable. The HUb is the
+    Its main purpose is to control the Hub_GameState variable. The Hub is the
     only object with write acces to the game state variable.
-    2. The Loader is called by the frame interupt handler. Depending on the
+    2. The Loader is the first object in the main loop. Depending on the
     game state, the loader loads buffered data into vram, i.e. the sprite
-    attribute table, the name table.
+    attribute table, the name table. The loader takes care of all the vram
+    updating.
 
 ##Hub_GameState
 The overall state of the game is controlled by the 1 byte variable
@@ -74,7 +75,8 @@ development process the corresponding states where implemented.
 Typical flow (The value of Hub_GameState):
 (Power on) > 5 > 6 > 4 > 3 > 2 > 0 > 1 > 3 ....
 
-##The main loop
+##The Main Loop
+This structure is actually inspired by studies on disassembled Atari 2600 games.
 ```asm
 ; --------------------------------------------------------------
 .section "Main Loop" free                                      ;

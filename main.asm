@@ -113,8 +113,8 @@ InitializeFramework:
            inc c
            djnz -
 
-           ; Start main loop in state 4: Initialise session.
-           ld a,4
+           ; Start main loop in state 5: Prepare title screen.
+           ld a,5
            ld (Hub_GameState),a
 
            call PSGInit
@@ -849,10 +849,21 @@ _4:        ld a,3
            ld (Hub_GameState),a
            jp _EndSwitch
 
-_5:
+; Prepare title screen.
+_5:        ld a,6
+           ld (Hub_GameState),a
+           jp _EndSwitch
 
-_6:
+; Run title screen.
+_6:        ; Wait for keypress.
+           ld a,(Joystick1)
+           bit 4,a
+           jp nz,+
 
+           ; Initialize session.
+           ld a,4
+           ld (Hub_GameState),a
++
 _EndSwitch:
 
 ; Return to main loop:

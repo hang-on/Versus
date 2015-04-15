@@ -773,6 +773,10 @@ _5:        ; Initialize the SAT buffer with menu selector.
            ld bc,18
            ldir
 
+           ; Point to first menu item.
+           xor a
+           ld (Menu_Item),a
+
            ret
 
 _6:        ; Make selector respond to player 1's joystick.
@@ -972,15 +976,23 @@ _1:        ; See if match should end (one player has 9 points).
            jp _EndSwitch
 
 ; State 2: Pre-match menu.
-_2:        ; Wait for keypress.
+_2:        ; Look for keypress.
            ld a,(Joystick1)
            bit 4,a
-           jp nz,+
+           jp nz,++
 
+           ; Key pressed! Check current menu item.
+           ld a,(Menu_Item)
+           cp 0
+           jp nz,+
            ; Start match.
            ld a,0
            ld (Hub_GameState),a
-+
+           jp ++
++          ; Return to title screen menu.
+           ld a,5
+           ld (Hub_GameState),a
+++
            jp _EndSwitch
 
 ; State 3: Initialize pre-match menu.
@@ -1004,7 +1016,7 @@ _5:        ; Play title screen tune.
            jp _EndSwitch
 
 ; Run title screen.
-_6:        ; Wait for keypress.
+_6:        ; Look for keypress.
            ld a,(Joystick1)
            bit 4,a
            jp nz,+

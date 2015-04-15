@@ -736,7 +736,13 @@ _1:        ret
 
 _2:        ret
 
-_3:        ret
+; Initialize pre-match menu:
+_3:        ld a,170
+           ld (SATBuffer+7),a
+           ld a,20
+           ld (SATBuffer+30),a
+
+           ret
 
 _4:        ret
 
@@ -982,7 +988,7 @@ _6:        ; Wait for keypress.
            ld a,(Joystick1)
            bit 4,a
            jp nz,+
-           
+
            ; Key pressed! Now start match in desired mode.
            ; Temp: For now, only allow two-player mode.
            ld a,(Menu_Item)

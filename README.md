@@ -2,6 +2,7 @@
 
 ##Introduction
 Versus is a Pong clone for the Sega Master System.
+Designed to run on an NTSC system (60 hz).
 
 
 ##Terminology
@@ -68,3 +69,9 @@ which game objects can read, but only Hub can write to.
 | 0     | Player 1 is scoring                                                  |
 | 1     | Player 2 is scoring                                                  |
 | 2     | Match is over (one player has 9 points)                              |
+
+
+Known issues:
+Versus is tested on Meka, Emulicious and real hardware (60 hz modded SMSII w.
+an Everdrive). It should run without problems, except for the sound effects, 
+which are are a little out of sync on my Meka setup.

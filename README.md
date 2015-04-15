@@ -52,9 +52,11 @@ game state.
 | 2     | Run pre-match menu                                                   |
 | 3     | Initialize pre-match menu                                            |
 | 4     | Initialize session                                                   |
+| 5     | Prepare titlescreen                                                  |
+| 6     | Run titlescreen                                                      |
 
 Typical flow (The value of Hub_GameState):
-4 > 3 > 2 > 0 > 1 > 3 ....
+(Power on) > 5 > 6 > 4 > 3 > 2 > 0 > 1 > 3 ....
 
 
 ##Hub_Status

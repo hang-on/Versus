@@ -743,13 +743,28 @@ _2:        ; Make selector respond to player 1's joystick.
            ld a,(Joystick1)
            bit 2,a
            jp nz,+
+           ld a,(Menu_Item)
+           cp 1
+           jp nz,++
+           ; Change menu item to 0 (Play).
+           ld c,SFX_CHANNEL2
+           ld hl,SFX_Paddle0
+           call PSGSFXPlay
            ld a,$5e
            ld (SATBuffer+30),a
            xor a
            ld (Menu_Item),a
            jp ++
-+          bit 3,a
++          ld a,(Joystick1)
+           bit 3,a
            jp nz,++
+           ld a,(Menu_Item)
+           cp 0
+           jp nz,++
+           ; Change menu item to 1 (Menu).
+           ld c,SFX_CHANNEL2
+           ld hl,SFX_Paddle1
+           call PSGSFXPlay
            ld a,$85
            ld (SATBuffer+30),a
            ld a,1

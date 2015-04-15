@@ -299,13 +299,6 @@ _4:        ; Update vdp register.
            ld bc,4
            call LoadVRAM
 
-           ; Load the ball tiles @ index 256.
-           ld hl,$2000
-           call PrepareVRAM
-           ld hl,BallTile
-           ld bc,32
-           call LoadVRAM
-
            ; Load the paddle tiles @ index 257.
            ld hl,$2020
            call PrepareVRAM
@@ -340,6 +333,13 @@ _5:        ; Disable display.
            call PrepareVRAM
            ld hl,Titlescreen_Palette
            ld bc,16
+           call LoadVRAM
+
+           ; Load the ball tiles @ index 256.
+           ld hl,$2000
+           call PrepareVRAM
+           ld hl,BallTile
+           ld bc,32
            call LoadVRAM
 
            jp _EndSwitch

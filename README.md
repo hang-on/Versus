@@ -69,6 +69,7 @@ which game objects can read, but only Hub can write to.
 | 0     | Player 1 is scoring                                                  |
 | 1     | Player 2 is scoring                                                  |
 | 2     | Match is over (one player has 9 points)                              |
+| 3     | Ken is controlled by the AI                                          |
 
 
 Known issues:

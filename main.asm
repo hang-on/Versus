@@ -982,6 +982,12 @@ _6:        ; Wait for keypress.
            ld a,(Joystick1)
            bit 4,a
            jp nz,+
+           
+           ; Key pressed! Now start match in desired mode.
+           ; Temp: For now, only allow two-player mode.
+           ld a,(Menu_Item)
+           cp 1
+           jp nz,+
 
            ; Initialize session.
            ld a,4

@@ -37,10 +37,11 @@
            Ball_VerticalSpeed db
            Ball_HorizontalDirection db
            Ball_VerticalDirection db
+           Ball_Timer db
 
            Paddle1_Y db
            Paddle2_Y db
-           
+
            Menu_Item db
 
            Score_Player1 db
@@ -390,7 +391,16 @@ Ball:      ; Switch according to current game state.
 _0:        jp _EndSwitch
 
 ; Match is playing - update the ball!
-_1:        ; First: Resolve current state of the ball.
+_1:        ; If Ball_Timer is > 0, then, decrement it and skip
+           ; all ball movements.
+           ld a,(Ball_Timer)
+           cp 0
+           jp z,+
+           dec a
+           ld (Ball_Timer),a
+           jp _EndSwitch
+
++          ; First: Resolve current state of the ball.
            ; See if ball collides with the bottom border.
            ld a,(Ball_Y)
            cp 169
@@ -533,6 +543,10 @@ _UpdateBallSprite:
            ret
 
 _ResetBall:
+           ; Make ball pause will serve sfx plays...
+           ld a,60
+           ld (Ball_Timer),a
+
            ld a,127
            ld (Ball_X),a
            ld a,92

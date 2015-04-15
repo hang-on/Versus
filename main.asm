@@ -933,6 +933,12 @@ _4:        ; Initialize the name table buffer (0:0).
            ld de,NameTableBuffer
            ld bc,3*7*2
            ldir
+           ; Reset score.
+           xor a
+           ld (Score_Player1),a
+           ld (Score_Player2),a
+
+
            jp _EndSwitch
 _5:
 

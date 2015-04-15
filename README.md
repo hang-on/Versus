@@ -1,9 +1,21 @@
 # Versus
 
 ##Introduction
-Versus is a Pong clone for the Sega Master System.
-Designed to run on an NTSC system (60 hz).
+Versus is a Pong clone for the Sega Master System. It is designed to run on an
+NTSC system (60 hz). It is pretty straight forward to navigate and play. The
+players take up the roles of Nya and Ken, two Pong-playing, competing siblings.
+The first player to score 9 points wins the match. That's it! Even though Pong
+is best played against a real human, this game can also cater to an intense
+one-player Pong showdown, thanks to the built-in, always Pong-ready AI.
 
+Versus is built with tools and knowledge from the SMS-Power! community. Thanks
+to Maxim for BMP2Tile, Bock for Meka, Calindro for Emulicious, and sverx for
+PSGLib and vgm2psg! At the time of writing the SMS-Power 18th anniversary compo
+is finishing, and it has been very inspiring to be a part of it. Greetings to
+my fellow contestants.
+
+The rest of this document does mainly provide some development notes on
+aspects of the game.
 
 ##Terminology
 - Nya: Nya is a warm-blooded girl that loves to play Pong but hates to loose.
@@ -40,11 +52,14 @@ Designed to run on an NTSC system (60 hz).
     attribute table, the name table.
 
 ##Hub_GameState
-The overall state of the game is controlled by the 1 byte variable 
-Hub_GameState. This variable is altered by the Hub object, and it is read by 
-each of the game objects during the main loop. A game object has a script for 
-each game state. This way each object adjusts its behavior depending on the 
+The overall state of the game is controlled by the 1 byte variable
+Hub_GameState. This variable is altered by the Hub object, and it is read by
+each of the game objects during the main loop. A game object has a script for
+each game state. This way each object adjusts its behavior depending on the
 game state.
+
+The numbering is not chronological. Instead the numbers reflect where in the
+development process the corresponding states where implemented.
 
 | Value | Comment                                                              |
 | :---: | :------------------------------------------------------------------- |
@@ -59,6 +74,27 @@ game state.
 Typical flow (The value of Hub_GameState):
 (Power on) > 5 > 6 > 4 > 3 > 2 > 0 > 1 > 3 ....
 
+##The main loop
+```asm
+; --------------------------------------------------------------
+.section "Main Loop" free                                      ;
+; --------------------------------------------------------------
+MainLoop:                                                      ;
+           call WaitForFrameInterrupt                          ;
+           call Loader                                         ;
+           call Ball                                           ;
+           call Paddles                                        ;
+           call Menu                                           ;
+           call Score                                          ;
+           call Hub                                            ;                                                               ;
+           call PSGSFXFrame                                    ;
+           call PSGFrame                                       ;
+           jp MainLoop                                         ;
+.ends                                                          ;
+; --------------------------------------------------------------
+
+```
+
 
 ##Hub_Status
 This is 8 flags that can be set by any game object. Unlike Hub_GameState,
@@ -72,7 +108,7 @@ which game objects can read, but only Hub can write to.
 | 3     | Ken is controlled by the AI                                          |
 
 
-Known issues:
+##Known issues
 Versus is tested on Meka, Emulicious and real hardware (60 hz modded SMSII w.
-an Everdrive). It should run without problems, except for the sound effects, 
+an Everdrive). It should run without problems, except for the sound effects,
 which are are a little out of sync on my Meka setup.

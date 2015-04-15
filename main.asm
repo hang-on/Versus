@@ -641,6 +641,8 @@ _1:        ; Move paddle 1 with player 1 joystick.
            rla
            call _MovePaddle
 
+           call _UpdatePaddleSprites
+
            jp _EndSwitch
 
 ; Run pre-match.
@@ -667,6 +669,11 @@ _5:
 _6:
 
 _EndSwitch:
+
+; Return to main loop:
+           ret
+
+_UpdatePaddleSprites:
            ; Generate paddle sprites in the buffer.
            ld a,(Paddle1_Y)
            ld hl,SATBuffer+1
@@ -674,8 +681,6 @@ _EndSwitch:
            ld a,(Paddle2_Y)
            ld hl,SATBuffer+4
            call _SetPaddleSprite
-
-; Return to main loop:
            ret
 
 _MovePaddle:

@@ -845,11 +845,15 @@ _EndSwitch:
 
 ; --------------------------------------------------------------
 .bank 1 slot 1
-.section "Bank 1: Music, sfx and misc." free
+.section "Bank 1: Titlescreen, music, sfx and misc." free
 
 SFX_Wall .incbin "Wall.psg"
 SFX_Paddle0 .incbin "Paddle0.psg"
 SFX_Paddle1 .incbin "Paddle1.psg"
+
+Titlescreen_Tiles .include "Titlescreen_Tiles.inc"
+Titlescreen_Palette .include "Titlescreen_Palette.inc"
+Titlescreen_Tilemap .include "Titlescreen_Tilemap.inc"
 
 ReleaseNotes:
            .db "Pong. The world can never be saturated with clones of this"

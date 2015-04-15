@@ -888,4 +888,7 @@ ReleaseNotes:
            .include "Data.inc"
 .ends
 
+.bank 3 slot 2
+.section "Unused bank" free
 
+.ends

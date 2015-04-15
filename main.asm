@@ -40,6 +40,8 @@
 
            Paddle1_Y db
            Paddle2_Y db
+           
+           Menu_Item db
 
            Score_Player1 db
            Score_Player2 db
@@ -136,6 +138,7 @@ MainLoop:                                                      ;
            call Loader                                         ;
            call Ball                                           ;
            call Paddles                                        ;
+           call Menu                                           ;
            call Score                                          ;
            call Hub                                            ;                                                               ;
            call PSGSFXFrame                                    ;
@@ -267,6 +270,13 @@ _4:        ; Update vdp register.
            ld bc,60*32
            call LoadVRAM
 
+           ; Load the paddle tiles @ index 257.
+           ld hl,$2020
+           call PrepareVRAM
+           ld hl,PaddleTiles
+           ld bc,3 * 32
+           call LoadVRAM
+
            ; Load playfield tilemap into name table.
            ld hl,$3800
            call PrepareVRAM
@@ -286,13 +296,6 @@ _4:        ; Update vdp register.
            call PrepareVRAM
            ld hl,SpritePalette
            ld bc,4
-           call LoadVRAM
-
-           ; Load the paddle tiles @ index 257.
-           ld hl,$2020
-           call PrepareVRAM
-           ld hl,PaddleTiles
-           ld bc,3 * 32
            call LoadVRAM
 
            jp _EndSwitch
@@ -324,6 +327,13 @@ _5:        ; Disable display.
            ld bc,16
            call LoadVRAM
 
+           ; Load sprite colors into bank 2.
+           ld hl,$c010
+           call PrepareVRAM
+           ld hl,SpritePalette
+           ld bc,4
+           call LoadVRAM
+
            ; Load the ball tiles @ index 256.
            ld hl,$2000
            call PrepareVRAM
@@ -338,6 +348,8 @@ _6:        ; Enable display.
            ld a,%11100000
            ld b,1
            call SetRegister
+
+           call _LoadSprites
 
            jp _EndSwitch
 
@@ -482,12 +494,15 @@ _1:        ; First: Resolve current state of the ball.
            ld c,0
            call _DetectCollision
 
+           call _UpdateBallSprite
+
            jp _EndSwitch
 
 _2:        jp _EndSwitch
 
 ; Initialize pre-match:
 _3:        call _ResetBall
+           call _UpdateBallSprite
            jp _EndSwitch
 
 ; Initialize session.
@@ -498,13 +513,17 @@ _5:
 _6:
 
 _EndSwitch:
+
+
+; Return to main loop.
+           ret
+
+_UpdateBallSprite:
            ; Update ball data in the SAT buffer.
            ld a,(Ball_Y)
            ld (SATBuffer),a
            ld a,(Ball_X)
            ld (SATBuffer+16),a
-
-; Return to main loop.
            ret
 
 _ResetBall:
@@ -694,6 +713,46 @@ _SetPaddleSprite:
            ret                 ; return.
 
            _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6
+.ends
+
+; --------------------------------------------------------------
+.section "Menu" free
+; --------------------------------------------------------------
+Menu:
+           ; Switch according to current game state.
+           ld a,(Hub_GameState)
+           ld de,_SwitchVectors
+           call GetVector
+           jp (hl)
+
+_0:        jp _EndSwitch
+
+_1:        jp _EndSwitch
+
+_2:        jp _EndSwitch
+
+_3:        jp _EndSwitch
+
+_4:        jp _EndSwitch
+
+; Prepare title screen
+_5:        ; Initialize the SAT buffer with menu selector.
+           ld hl,Titlescreen_SATInitializationData
+           ld de,SATBuffer
+           ld bc,18
+           ldir
+
+           jp _EndSwitch
+
+_6:        jp _EndSwitch
+
+_EndSwitch:
+
+; Return to main loop:
+           ret
+
+           _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6
+
 .ends
 
 ; --------------------------------------------------------------

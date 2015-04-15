@@ -61,6 +61,10 @@ NameTableInitializationData:
            .db 18 00 19 00 01 00 02 00 01 00 18 00 19 00
            .db 20 00 21 00 01 00 02 00 01 00 20 00 21 00
 
+Titlescreen_SATInitializationData:
+           .db 20 $d0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+           .db 20 00
+
 ; Pre-match menu, different variations of Nya and Ken.
 ; Menu0: Clear the menu by writing 10 bottom rows of playfield.
 Menu0_Tilemap:

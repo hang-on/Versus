@@ -734,14 +734,34 @@ _0:        ret
 
 _1:        ret
 
-_2:        ret
+; Run pre-match menu:
+_2:        ; Make selector respond to player 1's joystick.
+           ld a,(Joystick1)
+           bit 2,a
+           jp nz,+
+           ld a,$5e
+           ld (SATBuffer+30),a
+           xor a
+           ld (Menu_Item),a
+           jp ++
++          bit 3,a
+           jp nz,++
+           ld a,$85
+           ld (SATBuffer+30),a
+           ld a,1
+           ld (Menu_Item),a
+++
+
+
+           ret
 
 ; Initialize pre-match menu:
-_3:        ld a,170
+_3:        ld a,$ad
            ld (SATBuffer+7),a
-           ld a,20
+           ld a,$5e
            ld (SATBuffer+30),a
-
+           xor a
+           ld (Menu_Item),a
            ret
 
 _4:        ret

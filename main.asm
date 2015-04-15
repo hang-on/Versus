@@ -1099,18 +1099,28 @@ _5:        ; Play title screen tune.
 _6:        ; Look for keypress.
            ld a,(Joystick1)
            bit 4,a
-           jp nz,+
+           jp nz,_EndSwitch
 
            ; Key pressed! Now start match in desired mode.
            ; Temp: For now, only allow two-player mode.
            ld a,(Menu_Item)
            cp 1
-           jp nz,+
+           jp z,+
+           ; Start a one player game.
+           ld a,(Hub_Status)
+           set 3,a
+           ld (Hub_Status),a
+           jp ++
++          ; Start a two player game.
+           ld a,(Hub_Status)
+           res 3,a
+           ld (Hub_Status),a
 
-           ; Initialize session.
+++          ; Initialize session.
            ld a,4
            ld (Hub_GameState),a
-+
+
+
 _EndSwitch:
 
 ; Return to main loop:

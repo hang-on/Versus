@@ -173,19 +173,8 @@ _1:        ld a,%11100000
            ld b,1
            call SetRegister
 
-           ; Load buffer contents to SAT in VRAM.
-           ld hl,$3f00
-           call PrepareVRAM
-           ld hl,SATBuffer
-           ld b,16
-           ld c,$be
-           otir
-           ld hl,$3f80
-           call PrepareVRAM
-           ld hl,SATBuffer+16
-           ld b,32
-           ld c,$be
-           otir
+           ; Load sprites from the SAT buffer.
+           call _LoadSprites
 
            ; Draw the two score digits on the playfield.
            ld hl,$38da
@@ -354,8 +343,23 @@ _6:        ; Enable display.
 
 _EndSwitch:
 
-
 ; Return to main loop:
+           ret
+
+_LoadSprites:
+           ; Load SAT buffer contents to VRAM.
+           ld hl,$3f00
+           call PrepareVRAM
+           ld hl,SATBuffer
+           ld b,16
+           ld c,$be
+           otir
+           ld hl,$3f80
+           call PrepareVRAM
+           ld hl,SATBuffer+16
+           ld b,32
+           ld c,$be
+           otir
            ret
 
            _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6

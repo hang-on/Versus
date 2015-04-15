@@ -730,15 +730,15 @@ Menu:
            call GetVector
            jp (hl)
 
-_0:        jp _EndSwitch
+_0:        ret
 
-_1:        jp _EndSwitch
+_1:        ret
 
-_2:        jp _EndSwitch
+_2:        ret
 
-_3:        jp _EndSwitch
+_3:        ret
 
-_4:        jp _EndSwitch
+_4:        ret
 
 ; Prepare title screen
 _5:        ; Initialize the SAT buffer with menu selector.
@@ -747,9 +747,26 @@ _5:        ; Initialize the SAT buffer with menu selector.
            ld bc,18
            ldir
 
-           jp _EndSwitch
+           ret
 
-_6:        jp _EndSwitch
+_6:        ; Make selector respond to player 1's joystick.
+           ld a,(Joystick1)
+           bit 1,a
+           jp nz,+
+           ld hl,SATBuffer
+           ld (hl),$8f
+           ld a,1
+           ld (Menu_Item),a
+           jp ++
++          bit 0,a
+           jp nz,++
+           ld hl,SATBuffer
+           ld (hl),$7f
+           xor a
+           ld (Menu_Item),a
+++
+
+           ret
 
 _EndSwitch:
 

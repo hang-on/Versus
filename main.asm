@@ -112,6 +112,11 @@ InitializeFramework:
            inc hl
            inc c
            djnz -
+           
+           ; Set the border color.
+           ld a,%11110000
+           ld b,7
+           call SetRegister
 
            ; Start main loop in state 5: Prepare title screen.
            ld a,5
@@ -308,11 +313,6 @@ _4:        ; Update vdp register.
            ld bc,3 * 32
            call LoadVRAM
 
-           ; Set the border color.
-           ld a,%11110000
-           ld b,7
-           call SetRegister
-
            jp _EndSwitch
 
 ; Prepare title screen:
@@ -325,7 +325,7 @@ _5:        ; Disable display.
            ld hl,$0000
            call PrepareVRAM
            ld hl,Titlescreen_Tiles
-           ld bc,72*32
+           ld bc,87*32
            call LoadVRAM
 
            ; Load title screen tilemap into name table.
@@ -341,11 +341,6 @@ _5:        ; Disable display.
            ld hl,Titlescreen_Palette
            ld bc,16
            call LoadVRAM
-
-           ; Set the border color.
-           ld a,%11110000
-           ld b,7
-           call SetRegister
 
            jp _EndSwitch
 

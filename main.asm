@@ -216,7 +216,7 @@ _3:        ; Should we load Menu0? (Nya and Ken are both ready).
            ld hl,$0a00
            call PrepareVRAM
            ld hl,Menu1_Tiles
-           ld bc,91*32
+           ld bc,32*32
            call LoadVRAM
            ld hl,$3b80
            call PrepareVRAM

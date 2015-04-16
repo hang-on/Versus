@@ -314,7 +314,7 @@ _5:        ; Disable display.
            ld hl,$0000
            call PrepareVRAM
            ld hl,Titlescreen_Tiles
-           ld bc,87*32
+           ld bc,108*32
            call LoadVRAM
 
            ; Load title screen tilemap into name table.

@@ -52,6 +52,7 @@
            Hub_GameState db
            Hub_LoopCounter db
            Hub_Status db
+           Hub_Timer db
 
            NameTableBuffer dsb 3*7*2
            .ende
@@ -1046,7 +1047,18 @@ _EndSwitch:
 Hub:       ; Increment loop counter at every loop.
            ld hl,Hub_LoopCounter
            inc (hl)
-
+           
+           ; Decrement timer if it is non-zero, and player 1 is
+           ; not pressing start.
+           ld a,(Hub_Timer)
+           cp 0
+           jp z,+
+           ld a,(Joystick1)
+           bit 4,a
+           jp z,+
+           ld hl,Hub_Timer
+           dec (hl)
++
            ; Read joystick port into ram.
            call ReadJoysticks
 
@@ -1084,9 +1096,9 @@ _1:        ; See if match should end (one player has 9 points).
            jp _EndSwitch
 
 ; State 2: Run pre-match menu.
-_2:        ld a,(Hub_LoopCounter)
-           cp 30
-           ret c
+_2:        ld a,(Hub_Timer)
+           cp 0
+           ret nz
 
            ; Look for keypress.
            ld a,(Joystick1)
@@ -1108,8 +1120,9 @@ _2:        ld a,(Hub_LoopCounter)
            jp _EndSwitch
 
 ; State 3: Initialize pre-match menu.
-_3:        xor a
-           ld (Hub_LoopCounter),a
+_3:        ; Set delay.
+           ld a,40
+           ld (Hub_Timer),a
 
            ld a,2
            ld (Hub_GameState),a
@@ -1126,17 +1139,18 @@ _5:        ; Play title screen tune.
            ld hl,IntergalacticTableTennis
            call PSGPlay
 
-           xor a
-           ld (Hub_LoopCounter),a
+           ; Set delay.
+           ld a,40
+           ld (Hub_Timer),a
 
            ld a,6
            ld (Hub_GameState),a
            jp _EndSwitch
 
 ; Run title screen.
-_6:        ld a,(Hub_LoopCounter)
-           cp 30
-           ret c
+_6:        ld a,(Hub_Timer)
+           cp 0
+           ret nz
 
            ; Look for keypress.
            ld a,(Joystick1)

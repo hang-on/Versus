@@ -24,6 +24,9 @@ The title screen smash hit was composed on Delek's Deflemask tracker, with
 arpeggio inspiration from jrlepage, and drum/bass inspiration from TmEE's
 compo entry this year.
 
+The visual style of the in-game assets is inspired by [the Pong tutorial at
+Rembound](http://rembound.com/articles/the-pong-tutorial).
+
 A Pong-clone is not breaking new ground on the SMS homebrew scene. Greetings 
 to Homsar47 and haroldoop who have also experimented with this classic game.
 

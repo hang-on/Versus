@@ -407,12 +407,14 @@ _1:        ; If Ball_Timer is > 0, then, decrement it and skip
            ld a,(Ball_Turbo)
            cp 0
            jp nz,+
+           
+           ; No turbo, speed = 2.
            ld a,2
            ld (Ball_HorizontalSpeed),a
            ld (Ball_VerticalSpeed),a
            jp ++
 
-+          ; Ball IS in turbo mode.
++          ; Ball IS in turbo mode, so speed = 3.
            ld a,3
            ld (Ball_HorizontalSpeed),a
            ld (Ball_VerticalSpeed),a
@@ -833,6 +835,7 @@ _2:        ; Make selector respond to player 1's joystick.
            ld a,(Menu_Item)
            cp 1
            jp nz,++
+           
            ; Change menu item to 0 (Play).
            ld c,SFX_CHANNEL2
            ld hl,SFX_Paddle0
@@ -842,12 +845,14 @@ _2:        ; Make selector respond to player 1's joystick.
            xor a
            ld (Menu_Item),a
            jp ++
+
 +          ld a,(Joystick1)
            bit 3,a
            jp nz,++
            ld a,(Menu_Item)
            cp 0
            jp nz,++
+
            ; Change menu item to 1 (Menu).
            ld c,SFX_CHANNEL2
            ld hl,SFX_Paddle1
@@ -1047,7 +1052,7 @@ _EndSwitch:
 Hub:       ; Increment loop counter at every loop.
            ld hl,Hub_LoopCounter
            inc (hl)
-           
+
            ; Decrement timer if it is non-zero, and player 1 is
            ; not pressing start.
            ld a,(Hub_Timer)

@@ -1,5 +1,5 @@
 ; Setup the SDSC tag, including correct chekcsum:
-           .sdsctag 0.1, "Versus", ReleaseNotes, "Anders S. Jensen"
+           .sdsctag 1.0, "Versus", ReleaseNotes, "Anders S. Jensen"
 
 ; Organize read only memory:
            ; Three rom slots a' 16K. Assume standard Sega mapper
@@ -163,7 +163,7 @@ Loader:
            call GetVector
            jp (hl)
 
-; Load assets for a match:
+; Prepare match:
 _0:        ; Get rid of pre-match menu overlay...
            ; Update the name table.
            ld hl,$3b80
@@ -205,14 +205,15 @@ _1:        ld a,%11100000
 ; Run pre-match menu: Behave just like match.
 _2:        jp _1
 
-; Initialize pre-match
-_3:        ; Should we load Menu0? (Nya and Ken are both ready).
+; Initialize pre-match: Load the correct menu graphics.
+_3:        ; Is this the session's first match?
            ld a,(Score_Player1)
            ld b,a
            ld a,(Score_Player2)
            or b
            jp nz,+
-           ; OK - load Menu0.
+
+           ; OK - load Menu_1.
            ld hl,$0a00
            call PrepareVRAM
            ld hl,Menu1_Tiles
@@ -407,7 +408,7 @@ _1:        ; If Ball_Timer is > 0, then, decrement it and skip
            ld a,(Ball_Turbo)
            cp 0
            jp nz,+
-           
+
            ; No turbo, speed = 2.
            ld a,2
            ld (Ball_HorizontalSpeed),a
@@ -780,6 +781,7 @@ _MovePaddle:
            jp z,+
            dec (hl)
            dec (hl)
+
 +          pop af
            bit 1,a
            jp nz,+
@@ -835,7 +837,7 @@ _2:        ; Make selector respond to player 1's joystick.
            ld a,(Menu_Item)
            cp 1
            jp nz,++
-           
+
            ; Change menu item to 0 (Play).
            ld c,SFX_CHANNEL2
            ld hl,SFX_Paddle0
@@ -941,6 +943,7 @@ _1:        ; Is player 1 scoring (status flag set by the ball)?
            ld (Score_Player1),a
            cp 9
            jp nz,+
+           
            ; Set status bit to signal match end.
            ld a,(Hub_Status)
            or %00000100
@@ -957,6 +960,7 @@ _1:        ; Is player 1 scoring (status flag set by the ball)?
            ld (Score_Player2),a
            cp 9
            jp nz,+
+           
            ; Set status bit to signal match end.
            ld a,(Hub_Status)
            or %00000100
@@ -1025,11 +1029,11 @@ _4:        ; Initialize the name table buffer (0:0).
            ld de,NameTableBuffer
            ld bc,3*7*2
            ldir
+           
            ; Reset score.
            xor a
            ld (Score_Player1),a
            ld (Score_Player2),a
-
 
            jp _EndSwitch
 _5:
@@ -1042,9 +1046,7 @@ _EndSwitch:
            ret
 
            _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6
-
 .ends
-
 
 ; --------------------------------------------------------------
 .section "Hub" free
@@ -1163,7 +1165,6 @@ _6:        ld a,(Hub_Timer)
            jp nz,_EndSwitch
 
            ; Key pressed! Now start match in desired mode.
-           ; Temp: For now, only allow two-player mode.
            ld a,(Menu_Item)
            cp 1
            jp z,+

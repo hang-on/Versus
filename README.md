@@ -15,10 +15,12 @@ between the two players. Every time the ball is served from the center line,
 its speed is reset.
 
 Versus is built with tools and knowledge from the SMS-Power! community. Thanks
-to Maxim for BMP2Tile, Bock for Meka, Calindro for Emulicious, and sverx for
-PSGLib and vgm2psg! At the time of writing, the SMS-Power 18th anniversary
-compo is finishing, and it has been very inspiring to be a part of it.
-Greetings to my fellow contestants!
+to Maxim (BMP2Tile), Bock (Meka), Calindro (Emulicious), and sverx (PSGLib and 
+vgm2psg)!
+
+At the time of writing, the SMS-Power 18th anniversary compo is finishing, and 
+it has been very inspiring to be a part of it. Greetings to my fellow 
+contestants!
 
 The title screen smash hit was composed on Delek's Deflemask tracker, with
 arpeggio inspiration from jrlepage, and drum/bass inspiration from TmEE's
@@ -87,11 +89,12 @@ Typical flow (The value of Hub_GameState):
 (Power on) > 5 > 6 > 4 > 3 > 2 > 0 > 1 > 3 ....
 
 ##The Main Loop
-Versus' structure is actually inspired by studies on disassembled Atari 2600
+Versus' structure is actually inspired by studies of disassembled Atari 2600
 games. Every object is called once every cycle of the loop. This has really 
 improved my workflow as the game started to grow. For example: I came to a 
 point where I needed a menu, and I just created a menu object and squeezed it
-into the loop.
+into the loop. This structure allows me to 'hack in' new elements and features
+as I go along, without the code turning spaghetti on me!
 ```asm
 ; --------------------------------------------------------------
 .section "Main Loop" free                                      ;
@@ -111,11 +114,11 @@ MainLoop:                                                      ;
 ; --------------------------------------------------------------
 ```
 Every object follows the same structure. At first it executes instructions
-that should be carried out, regardless of game state. Then comes a vector 
+that should be carried out, regardless of game state. Then comes a vector
 table that functions like a switch/case control structure, allowing the object
 to behave differently depending on the value of Hub_GameState. Remember,
 objects can only read, not write, to the Hub_GameState. This turns the Hub
-object (which controls the game state) into a kind of master/synchronization 
+object (which controls the game state) into a kind of master/synchronization
 device.
 
 ##Hub_Status
@@ -128,6 +131,10 @@ which game objects can read, but only Hub can write to.
 | 1     | Player 2 is scoring                                                  |
 | 2     | Match is over (one player has 9 points)                              |
 | 3     | Ken is controlled by the AI                                          |
+| 4     | Unused                                                               |
+| 5     | Unused                                                               |
+| 6     | Unused                                                               |
+| 7     | Unused                                                               |
 
 
 ##Known issues

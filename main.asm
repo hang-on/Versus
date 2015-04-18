@@ -707,7 +707,7 @@ _1:        ; Move paddle 1 with player 1 joystick.
            ld a,(Paddle_AIDelay)
            cp 0
            jp nz,+
-           ld a,4
+           ld a,5
            ld (Paddle_AIDelay),a
            ret
 

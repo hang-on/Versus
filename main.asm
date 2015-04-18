@@ -43,6 +43,7 @@
 
            Paddle1_Y db
            Paddle2_Y db
+           Paddle_AIDelay db
 
            Menu_Item db
 
@@ -697,6 +698,23 @@ _1:        ; Move paddle 1 with player 1 joystick.
            jp z,_Player2Input
 
            ; OK - AI controls Ken. Move his paddle.
+           ; First see if secret easy mode is enabled.
+           ld a,(Hub_Status)
+           bit 4,a
+           jp z,++
+
+           ; easy mode enabled.
+           ld a,(Paddle_AIDelay)
+           cp 0
+           jp nz,+
+           ld a,4
+           ld (Paddle_AIDelay),a
+           ret
+
++          dec a
+           ld (Paddle_AIDelay),a
+
+++         ; regular AI control of paddle
            ld a,(Ball_Y)
            ld b,a
            ld a,(Paddle2_Y)
@@ -1116,10 +1134,22 @@ _2:        ld a,(Hub_Timer)
            ld a,(Menu_Item)
            cp 0
            jp nz,+
+
            ; Start match.
            ld a,0
            ld (Hub_GameState),a
+
+           ; Check for player 1 holding left (easy mode).
+           ld a,(Joystick1)
+           bit 2,a
+           jp nz,++
+
+           ; Enable easy mode by setting bit.
+           ld a,(Hub_Status)
+           set 4,a
+           ld (Hub_Status),a
            jp ++
+
 +          ; Return to title screen menu.
            ld a,5
            ld (Hub_GameState),a
@@ -1130,6 +1160,11 @@ _2:        ld a,(Hub_Timer)
 _3:        ; Set delay.
            ld a,40
            ld (Hub_Timer),a
+
+           ; Reset secret cheat mode.
+           ld a,(Hub_Status)
+           res 4,a
+           ld (Hub_Status),a
 
            ld a,2
            ld (Hub_GameState),a

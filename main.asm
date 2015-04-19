@@ -599,14 +599,11 @@ _ResetBall:
            xor a
            ld (Ball_VerticalDirection),a
 
-           ld a,(Ball_HorizontalDirection)
-           or a
-           jp nz,+
-           inc a
+           ; Randomize direction ball is served.
+           ld a,r
+           and %00000001
            ld (Ball_HorizontalDirection),a
-           ret
-+          dec a
-           ld (Ball_HorizontalDirection),a
+
            ret
 
 
@@ -747,25 +744,23 @@ _1:
            ld a,r
            and %00000111
            ld (Paddle_AIAim),a
-+
-
-           ; First see if secret easy mode is enabled.
+           ; See if secret easy mode is enabled.
            ld a,(Hub_Status)
            bit 4,a
-           jp z,++
+           jp z,+
+           ld a,70
+           ld (Paddle_AIDelay),a
 
-           ; easy mode enabled.
++
+           ; Handle easy mode delay.
            ld a,(Paddle_AIDelay)
            cp 0
-           jp nz,+
-           ld a,5
+           jp z,+
+           dec a
            ld (Paddle_AIDelay),a
-           ret
+           jp _SkipAI
 
-+          dec a
-           ld (Paddle_AIDelay),a
-
-++         ; regular AI control of paddle
++          ; regular AI control of paddle
            ld a,(Ball_Y)
            ld b,a
            ld a,(Paddle2_Y)

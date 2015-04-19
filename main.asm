@@ -408,7 +408,14 @@ _1:        ; If Ball_Timer is > 0, then, decrement it and skip
            ld (Ball_Timer),a
            jp _EndSwitch
 
-+          ; Determine if the ball is in turbo mode.
++          ; Assume that collision does not happen...
+           ; if it does, the bit is set later!
+           ld a,(Hub_Status)
+           res 5,a
+           ld (Hub_Status),a
+
+
+           ; Determine if the ball is in turbo mode.
            ld a,(Ball_Turbo)
            cp 0
            jp nz,+
@@ -637,11 +644,10 @@ _DetectCollision:
            ret c
 
            ; If we get here, it means collision is happening!
-           ; Set new AI_Aim value, based on refresh register.
-           ;
-           ld a,r
-           and %00000111
-           ld (Paddle_AIAim),a
+           ; Signal this to the Hub_Status register.
+           ld a,(Hub_Status)
+           set 5,a
+           ld (Hub_Status),a
 
            ; See if max turbo duration is already achieved.
            ld a,(Ball_TurboDuration)
@@ -715,7 +721,9 @@ Paddles:
 _0:        jp _EndSwitch
 
 ; Match mode. Make paddles respond to player/AI input:
-_1:        ; Move paddle 1 with player 1 joystick.
+_1:
+
+           ; Move paddle 1 with player 1 joystick.
            ld hl,Paddle1_Y
            ld a,(Joystick1)
            call _MovePaddle
@@ -730,6 +738,16 @@ _1:        ; Move paddle 1 with player 1 joystick.
            ld a,(Ball_Timer)
            cp 0
            jp nz,_SkipAI
+
+           ; On ball/paddle collision, adjust the AI's aim.
+           ld a,(Hub_Status)
+           bit 5,a
+           jp z,+
+           ; Collision! Adjust aim.
+           ld a,r
+           and %00000111
+           ld (Paddle_AIAim),a
++
 
            ; First see if secret easy mode is enabled.
            ld a,(Hub_Status)
@@ -751,13 +769,16 @@ _1:        ; Move paddle 1 with player 1 joystick.
            ld a,(Ball_Y)
            ld b,a
            ld a,(Paddle2_Y)
-           add a,1  ; used to be 8 (and 5)
+           add a,2  ; used to be 8 (and 5)
            ld c,a
            ld a,(Paddle_AIAim)
            add a,c
            sub b
 
            jp nc,_AIMoveUp
+           ; testing...
+           add a,1
+           jp z, _AIMoveUp
 ; AI move down:
            xor a
            set 0,a

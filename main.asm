@@ -769,14 +769,14 @@ _1:
            ld a,(Ball_Y)
            ld b,a
            ld a,(Paddle2_Y)
-           add a,2  ; used to be 8 (and 5)
+           add a,3  ; used to be 8 (and 5)
            ld c,a
            ld a,(Paddle_AIAim)
            add a,c
            sub b
 
            jp nc,_AIMoveUp
-           ; testing...
+           ; Avoid AI paddle twitching...
            add a,1
            jp z, _AIMoveUp
 ; AI move down:
@@ -853,7 +853,7 @@ _MovePaddle:
            push af
            bit 0,a
            jp nz,+
-           ld a,20
+           ld a,14 ; top border.
            cp (hl)
            jp z,+
            dec (hl)
@@ -862,7 +862,7 @@ _MovePaddle:
 +          pop af
            bit 1,a
            jp nz,+
-           ld a,146
+           ld a,152 ; bottom border.
            cp (hl)
            jp z,+
            inc (hl)

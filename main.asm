@@ -454,7 +454,13 @@ _1:        ; If Ball_Timer is > 0, then, decrement it and skip
            call PSGSFXPlay
 
 ++         ; Second: Move the ball.
-           ; Determine if ball should move up or down.
+           ; Check if ball is travelling straight horizontally.
+           ld a,(Ball_VerticalDirection)
+           cp 2
+           jp z,++
+
+
++          ; Determine if ball should move up or down.
            ld a,(Ball_VerticalDirection)
            or a
            jp z,+
@@ -655,19 +661,29 @@ _DetectCollision:
            ld a,(hl)
            add a,13
            sub b
+           jp z,++
            jp nc,+
+
            ld a,0
            ld (Ball_VerticalDirection),a
            ld hl,SFX_Paddle0
            ld c,SFX_CHANNEL2
            call PSGSFXPlay
            ret
+
 +          ld a,1
            ld (Ball_VerticalDirection),a
            ld hl,SFX_Paddle1
            ld c,SFX_CHANNEL2
            call PSGSFXPlay
            ret
+
+++         ; bounce straight back (no vertical speed).
+           ld a,2
+           ld (Ball_VerticalDirection),a
+
+           ret
+
 
            _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6
 .ends

@@ -596,10 +596,14 @@ _ResetBall:
            ld a,2
            ld (Ball_HorizontalSpeed),a
            ld (Ball_VerticalSpeed),a
-           xor a
+           
+           ; Randomize vertical serving direction.
+           ld a,r
+           rra
+           and %00000001
            ld (Ball_VerticalDirection),a
 
-           ; Randomize direction ball is served.
+           ; Randomize horizontal direction ball is served.
            ld a,r
            and %00000001
            ld (Ball_HorizontalDirection),a

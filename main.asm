@@ -618,7 +618,7 @@ _DetectCollision:
            ; Second test: Is the ball over the paddle?
            ; Math: (ball y + paddle height) - paddle y < 0.
            ld a,(Ball_Y)
-           ld b,8
+           ld b,10
            add a,b
            sub (hl)
            ret c
@@ -628,7 +628,7 @@ _DetectCollision:
            ld a,(Ball_Y)
            ld d,a
            ld a,(hl)
-           ld b,26
+           ld b,28
            add a,b
            sub d
            ret c

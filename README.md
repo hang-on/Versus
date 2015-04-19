@@ -132,14 +132,14 @@ which game objects can read, but only Hub can write to.
 | 2     | Match is over (one player has 9 points)                             |
 | 3     | Ken is controlled by the AI                                         |
 | 4     | Secret easy mode enabled (one player game only)                     |
-| 5     | Unused                                                              |
+| 5     | Ball collided with paddle                                           |
 | 6     | Unused                                                              |
 | 7     | Unused                                                              |
 
-If you think the AI is a little too tough, you can activate the secret easy 
-mode by holding down left on player 1's joystick, while you select "play" 
-from the pre-match menu. For the rest of the match, the AI will be a little 
-slower. The secret easy mode is adressing concerns made by younger members of 
+If you think the AI is a little too tough, you can activate the secret easy
+mode by holding down left on player 1's joystick, while you select "play"
+from the pre-match menu. For the rest of the match, the AI will be a little
+slower. The secret easy mode is adressing concerns made by younger members of
 the playtesting team :)
 
 ##Known issues

@@ -44,6 +44,9 @@
            Paddle1_Y db
            Paddle2_Y db
            Paddle_AIDelay db
+           ; Paddle_AIAim (value 0-3) will make the AI aim for
+           ; different deflections (up, straight, down).
+           Paddle_AIAim db
 
            Menu_Item db
 
@@ -634,6 +637,12 @@ _DetectCollision:
            ret c
 
            ; If we get here, it means collision is happening!
+           ; Set new AI_Aim value, based on refresh register.
+           ;
+           ld a,r
+           and %00000111
+           ld (Paddle_AIAim),a
+
            ; See if max turbo duration is already achieved.
            ld a,(Ball_TurboDuration)
            cp 70
@@ -681,6 +690,9 @@ _DetectCollision:
 ++         ; bounce straight back (no vertical speed).
            ld a,2
            ld (Ball_VerticalDirection),a
+           ld hl,SFX_Paddle1
+           ld c,SFX_CHANNEL2
+           call PSGSFXPlay
 
            ret
 
@@ -714,6 +726,11 @@ _1:        ; Move paddle 1 with player 1 joystick.
            jp z,_Player2Input
 
            ; OK - AI controls Ken. Move his paddle.
+           ; Don't move when ball is still.
+           ld a,(Ball_Timer)
+           cp 0
+           jp nz,_SkipAI
+
            ; First see if secret easy mode is enabled.
            ld a,(Hub_Status)
            bit 4,a
@@ -734,8 +751,12 @@ _1:        ; Move paddle 1 with player 1 joystick.
            ld a,(Ball_Y)
            ld b,a
            ld a,(Paddle2_Y)
-           add a,8
+           add a,1  ; used to be 8 (and 5)
+           ld c,a
+           ld a,(Paddle_AIAim)
+           add a,c
            sub b
+
            jp nc,_AIMoveUp
 ; AI move down:
            xor a
@@ -761,6 +782,7 @@ _Player2Input:
            rla
            call _MovePaddle
 
+_SkipAI:
 ++         call _UpdatePaddleSprites
 
            jp _EndSwitch
@@ -810,7 +832,7 @@ _MovePaddle:
            push af
            bit 0,a
            jp nz,+
-           ld a,16
+           ld a,20
            cp (hl)
            jp z,+
            dec (hl)
@@ -819,7 +841,7 @@ _MovePaddle:
 +          pop af
            bit 1,a
            jp nz,+
-           ld a,150
+           ld a,146
            cp (hl)
            jp z,+
            inc (hl)

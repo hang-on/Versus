@@ -139,8 +139,7 @@ which game objects can read, but only Hub can write to.
 If you think the AI is a little too tough, you can activate the secret easy
 mode by holding down left on player 1's joystick, while you select "play"
 from the pre-match menu. For the rest of the match, the AI will be a little
-slower. The secret easy mode is adressing concerns made by younger members of
-the playtesting team :)
+slower (it will wait a while before chasing the ball).
 
 ##Known issues
 Versus is tested on Meka, Emulicious and real hardware (60 hz modded SMSII w.

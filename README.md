@@ -8,11 +8,11 @@ The first player to score 9 points wins the match. That's it! Even though Pong
 is best played against a real human, this game can also cater to an intense
 one-player Pong showdown, thanks to the built-in, always Pong-ready AI.
 
-Depending on where it hits the paddle, the ball is deflected either upwards or
-downwards. Every time the ball is deflected by a paddle, its speed increases 
-for a still longer time period. After a little while, the ball swirls fast 
-between the two players. Every time the ball is served from the center line,
-its speed is reset.
+Depending on where it hits the paddle, the ball is deflected either upwards, 
+downwards or straight horizontally. Every time the ball is deflected by a 
+paddle, its speed increases for a still longer time period. After a little 
+while, the ball swirls fast between the two players. Every time the ball is 
+served from the center line, its speed is reset.
 
 Versus is built with tools and knowledge from the SMS-Power! community. Thanks
 to Maxim (BMP2Tile), Bock (Meka), Calindro (Emulicious), and sverx (PSGLib and 
@@ -132,7 +132,7 @@ which game objects can read, but only Hub can write to.
 | 2     | Match is over (one player has 9 points)                             |
 | 3     | Ken is controlled by the AI                                         |
 | 4     | Secret easy mode enabled (one player game only)                     |
-| 5     | Ball collided with paddle                                           |
+| 5     | Ball collided with paddle (set/reset by ball obj)                   |
 | 6     | Unused                                                              |
 | 7     | Unused                                                              |
 
